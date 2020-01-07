@@ -1,2 +1,2 @@
-include ':mobile', ':automotive'
+include ':mobile', ':automotive', ':shared'
 rootProject.name='messaging-frontend'
