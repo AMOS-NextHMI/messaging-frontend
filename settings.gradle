@@ -1,0 +1,2 @@
+include ':mobile', ':automotive'
+rootProject.name='messaging-frontend'
