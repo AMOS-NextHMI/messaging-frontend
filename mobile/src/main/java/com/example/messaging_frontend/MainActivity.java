@@ -17,7 +17,8 @@ import com.google.android.material.snackbar.Snackbar;
 public class MainActivity extends AppCompatActivity {
 
     final String CHANNEL_ID = "123"; // This is a name for test purposes
-
+    // TODO: Take out the notification stuff
+    // TODO: introduce a login activity, after which a ConversationsListActivity is called.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
