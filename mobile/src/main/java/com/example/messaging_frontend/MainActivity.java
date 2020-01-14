@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(mBound){
                     mService.testMethod();
+                    mService.sendHttpTestMessage();
                 }
 
             }
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         // public abstract boolean bindService(Intent service, ServiceConnection conn, int flags);
         // ServiceConnection, which monitors the connection with the service.
         // The return value of bindService() indicates whether the requested service exists and whether the client is permitted access to it.
-    
+
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
         if(mBound){
