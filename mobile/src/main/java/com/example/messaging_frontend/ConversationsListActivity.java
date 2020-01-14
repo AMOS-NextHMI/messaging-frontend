@@ -3,8 +3,13 @@ package com.example.messaging_frontend;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ListView;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 
 /**
@@ -26,7 +31,27 @@ public class ConversationsListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversations_list);
-        //TODO: Initialize conversationList
+        // TODO: Initialize conversationList
+        // query all meta-conversations
+        ArrayList<MetaConversation> myConversations = get_conversation_list();
+
+        // TODO: create a conversation for each element in the list
+        /* Attempt #1
+        try {
+            myConversations.forEach(new Consumer<MetaConversation>() {
+                @Override
+                public void accept(MetaConversation converation) {
+                    ConversationsListActivity.add_conversation(converation);
+                }
+            });
+        } catch (Exception e){
+            Log.e("Conversations", "Error adding meta lists: " + e.toString());
+        }
+         */
+
+
+
+
     }
 
     /**
@@ -43,6 +68,16 @@ public class ConversationsListActivity extends AppCompatActivity {
     private ArrayList<MetaConversation> get_conversation_list() {
         //TODO
         return new ArrayList<MetaConversation>();
+    }
+
+    /**
+     * adds a conversation conversation
+     */
+    private void add_conversation(MetaConversation myConversation){
+        //TODO
+        ListView conversation_list = (ListView) findViewById(R.id.conversation_list_view);
+        
+
     }
 
 }
