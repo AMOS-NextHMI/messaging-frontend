@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void launchConversationListActivity(String value) {
         // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
-        Intent myIntent = new Intent(MainActivity.this, ConversationsListActivity.class);
+        Intent myIntent = new Intent(MainActivity.this, ConversationActivity.class);
         myIntent.putExtra("key", value); //Optional parameters - This can be used to pass parameters to the new activity.
         MainActivity.this.startActivity(myIntent);
     }
