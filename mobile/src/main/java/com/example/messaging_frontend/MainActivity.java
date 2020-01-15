@@ -40,8 +40,10 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendNotification();
+//                sendNotification();
 
+                //The value passed to the conv. list activity should be determined later after discussing it with the rest of the team.
+                launchConversationListActivity("Epstien didn't kill himself.");
                 if(mBound){
                     mService.testMethod();
                     mService.sendHttpTestMessage();
@@ -69,6 +71,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    /**
+     * Launches a conversation list and passes it a TBD value
+     */
+    private void launchConversationListActivity(String value) {
+        // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
+        Intent myIntent = new Intent(MainActivity.this, ConversationsListActivity.class);
+        myIntent.putExtra("key", value); //Optional parameters - This can be used to pass parameters to the new activity.
+        MainActivity.this.startActivity(myIntent);
     }
 
     /** Defines callbacks for service binding, passed to bindService() */
