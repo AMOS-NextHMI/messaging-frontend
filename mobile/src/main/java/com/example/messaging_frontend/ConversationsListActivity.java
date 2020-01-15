@@ -11,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -33,9 +35,9 @@ public class ConversationsListActivity extends AppCompatActivity {
 
 
     /* start of recycler view crap */
-//    private RecyclerView recyclerView;
-//    private RecyclerView.Adapter mAdapter;
-//    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
     /* end of recycler view crap */
 
 
@@ -58,24 +60,31 @@ public class ConversationsListActivity extends AppCompatActivity {
 
         // TODO: Initialize conversationList
         // query all meta-conversations
-        ArrayList<MetaConversation> myConversations = get_conversation_list();
 
+        ArrayList<MetaConversation> myConversations = get_conversation_list();
+//        mAdapter.notifyDataSetChanged();
         // TODO: create a conversation for each element in the list
         /* start of recycler view crap */
-//        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-//
-//        // use this setting to improve performance if you know that changes
-//        // in content do not change the layout size of the RecyclerView
-//        recyclerView.setHasFixedSize(true);
-//
-//        // use a linear layout manager
-//        layoutManager = new LinearLayoutManager(this);
-//        recyclerView.setLayoutManager(layoutManager);
-//
-//        // specify an adapter (see also next example)
-//        mAdapter = new MyAdapter(myDataset);
-//        recyclerView.setAdapter(mAdapter);
-//
+        recyclerView = (RecyclerView) findViewById(R.id.conversation_list_view);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        recyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        // specify an adapter (see also next example)
+        mAdapter = new ConversationListAdapter(myConversations);
+
+        // create seperators between items
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+
+
+        recyclerView.setAdapter(mAdapter);
+
         /* end of recycler view crap */
 
 
@@ -136,11 +145,63 @@ public class ConversationsListActivity extends AppCompatActivity {
      */
     private ArrayList<MetaConversation> get_conversation_list() {
         //TODO
-        return new ArrayList<MetaConversation>();
+
+//        return new ArrayList<MetaConversation>();
+
+        return get_dummy_conversation_list();
     }
 
     /**
-     * adds a conversation conversation
+     * returns a list of all messages in a conversation
+     */
+    private ArrayList<MetaConversation> get_dummy_conversation_list() {
+        //TODO
+        ArrayList<MetaConversation> myConvList = new ArrayList<>();
+
+        MetaConversation myConv = new_conv("Thomas Shelby", 665353, "By order of the peaky blinders", 1579127933);
+        myConvList.add(myConv);
+
+        myConv = new_conv("Arthur Shelby", 665354, "Linda!", 1579127920);
+        myConvList.add(myConv);
+
+
+        myConv = new_conv("John Shelby", 665355, "", 1579126033);
+        myConvList.add(myConv);
+
+
+        myConv = new_conv("Muh boy2", 665357, "I didn't do it.", 1579127800);
+        myConvList.add(myConv);
+
+        myConv = new_conv("Muh boy3", 665358, "I didn't do it.", 1579127223);
+        myConvList.add(myConv);
+
+        myConv = new_conv("Muh boy4", 665359, "I didn't do it.", 1579127132);
+        myConvList.add(myConv);
+
+        myConv = new_conv("Muh boy5", 665360, "I didn't do it.", 1579124252);
+        myConvList.add(myConv);
+
+        myConv = new_conv("Muh boy6", 665361, "I didn't do it.", 1579128763);
+        myConvList.add(myConv);
+
+        return myConvList;
+    }
+
+
+    public MetaConversation new_conv(String name, int id, String body, long timeStamp){
+        Contact myContact = new Contact(name, id);
+        Message myMessage = new Message(myContact, body, timeStamp);
+        MetaConversation myConv = MetaConversation.Builder.newInstance()
+                .setMyContact(myContact)
+                .setLatestMessage(myMessage)
+                .build();
+
+        return myConv;
+    }
+
+
+    /**
+     * adds a conversation conversation --  UNNECESSARY DUE TO ADAPTER
      */
     private void add_conversation(MetaConversation myConversation){
         //TODO
