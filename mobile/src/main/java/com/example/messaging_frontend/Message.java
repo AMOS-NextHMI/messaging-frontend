@@ -5,16 +5,20 @@ package com.example.messaging_frontend;
  * Messages can be sorted by time_stamp
  */
 public class Message {
-    private Object sender;
-    private Object body;
+    private Contact sender;
+    private String body;
     private long time_stamp;
 
 
     //TODO: set up a proper builder.
-    public Message(Object sender, Object body, long time_stamp) {
+    public Message(Contact sender, String body, long time_stamp) {
         this.sender = sender;
         this.body = body;
         this.time_stamp = time_stamp;
+    }
+
+    public String getBody() {
+        return this.body;
     }
 
     //TODO: set up getters and setters
