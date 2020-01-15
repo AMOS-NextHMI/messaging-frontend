@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +16,8 @@ import com.example.messaging_frontend.data.model.LoggedInUser;
 import com.example.messaging_frontend.data.model.UserMessage;
 
 import java.util.List;
+
+import static android.widget.Toast.makeText;
 
 public class ConversationAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
@@ -41,11 +44,11 @@ public class ConversationAdapter extends RecyclerView.Adapter {
         //if (message.getUserId().equals(loggedUser.getUserId()) ){
         if (message.getUserId().equals("2") ){
             // If the current user is the sender of the message
-            System.out.print("I sent the message");
+
             return VIEW_TYPE_MESSAGE_SENT;
         } else {
             // If some other user sent the message
-            System.out.print("Mahmoud sent the message");
+
             return VIEW_TYPE_MESSAGE_RECEIVED;
         }
     }
@@ -54,6 +57,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
+        Log.w("ConversationAdapter","viewHolder");
 
         if (viewType == VIEW_TYPE_MESSAGE_SENT) {
             view = LayoutInflater.from(parent.getContext())
@@ -72,7 +76,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         UserMessage message = (UserMessage) mMessageList.get(position);
-
+        Log.w("ConversationAdapter","bindViewHolder");
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_MESSAGE_SENT:
                 ((SentMessageHolder) holder).bind(message);
@@ -98,7 +102,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
             // Format the stored timestamp into a readable String using method.
             //MIGHT NOT WORK
 
-            timeText.setText((int) message.getCreatedAt());
+//            timeText.setText((int) message.getCreatedAt());
         }
     }
 
@@ -110,7 +114,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
             super(itemView);
 
             messageText = (TextView) itemView.findViewById(R.id.text_message_body);
-            timeText = (TextView) itemView.findViewById(R.id.text_message_time);
+           // timeText = (TextView) itemView.findViewById(R.id.text_message_time);
             nameText = (TextView) itemView.findViewById(R.id.text_message_name);
             profileImage = (ImageView) itemView.findViewById(R.id.image_message_profile);
         }
@@ -119,7 +123,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
             messageText.setText(message.getContent());
 
             // Format the stored timestamp into a readable String using method.
-            timeText.setText((int) message.getCreatedAt());
+           // timeText.setText("11:00");
 
             nameText.setText(message.getUserName());
 

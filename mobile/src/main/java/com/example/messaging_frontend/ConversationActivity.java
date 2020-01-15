@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.messaging_frontend.data.model.UserMessage;
 
@@ -37,13 +38,18 @@ public class ConversationActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         messageList = mockMessageList();
-
+        Log.w("ConversationActivity","onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
 
         mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
+
+
+
         mMessageAdapter = new ConversationAdapter(this, messageList);
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
+        mMessageRecycler.setAdapter(mMessageAdapter);
+        Log.w("ConversationActivity","onCreate finished");
     }
 
     private List<UserMessage> mockMessageList() {
