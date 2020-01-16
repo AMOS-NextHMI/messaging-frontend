@@ -6,6 +6,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.messaging_frontend.data.model.UserMessage;
 
@@ -33,7 +36,9 @@ public class ConversationActivity extends AppCompatActivity {
      */
     private RecyclerView mMessageRecycler;
     private ConversationAdapter mMessageAdapter;
-    List<UserMessage> messageList;
+    List<Message> messageList;
+    Button sendButton;
+    EditText messageSent;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,18 +52,38 @@ public class ConversationActivity extends AppCompatActivity {
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
         mMessageRecycler.setAdapter(mMessageAdapter);
 
+        /*This section of the code will be used once the send and receive functionalies are implemented*/
+
+//        sendButton= (Button) findViewById(R.id.button_send);
+//        messageSent = (EditText) findViewById(R.id.text_chatbox);
+//        sendButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v) {
+//
+//                String messageBody = messageSent.getText().toString();
+//
+//                Message messageSent = new Message(sender, messageBody, date);
+//                messageList.add(messageSent);
+//
+//            }
+//        });
+
     }
 
-    private List<UserMessage> mockMessageList() {
-
+    private List<Message> mockMessageList() {
+        List<Message> messageList = new ArrayList<>();
 
         Date date1 = new Date();
-        UserMessage message1 = new UserMessage("1","Mahmoud","Hey Feriel, how are you?", date1.getTime());
+        Contact sender = new Contact("Mahmoud",1);
+        Message message1 = new Message(sender,"Hey Feriel, how are you?", date1.getTime());
+
         Date date2 = new Date();
-        UserMessage message2 = new UserMessage("2","Feriel","I'm tired but I will survive", date2.getTime());
-        List<UserMessage> messageList = new ArrayList<>();
+        Contact receiver = new Contact("Feriel",2);
+        Message message2 = new Message(receiver,"I'm tired but I will survive", date2.getTime());
+
         messageList.add(message1);
         messageList.add(message2);
+
         return messageList;
     }
 

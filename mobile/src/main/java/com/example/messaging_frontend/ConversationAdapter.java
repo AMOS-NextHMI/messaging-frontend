@@ -24,9 +24,9 @@ public class ConversationAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
     private LoggedInUser loggedUser;
     private Context mContext;
-    private List<UserMessage> mMessageList;
+    private List<Message> mMessageList;
 
-    public ConversationAdapter(Context context, List<UserMessage> messageList) {
+    public ConversationAdapter(Context context, List<Message> messageList) {
         mContext = context;
         mMessageList = messageList;
     }
@@ -39,10 +39,10 @@ public class ConversationAdapter extends RecyclerView.Adapter {
     // Determines the appropriate ViewType according to the sender of the message.
     @Override
     public int getItemViewType(int position) {
-        UserMessage message =  mMessageList.get(position);
+        Message message =  mMessageList.get(position);
 
         //if (message.getUserId().equals(loggedUser.getUserId()) ){
-        if (message.getUserId().equals("2") ){
+        if (message.getSender().getId() == 2 ){
             // If the current user is the sender of the message
 
             return VIEW_TYPE_MESSAGE_SENT;
@@ -75,7 +75,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
     // Passes the message object to a ViewHolder so that the contents can be bound to UI.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        UserMessage message = (UserMessage) mMessageList.get(position);
+        Message message = (Message) mMessageList.get(position);
         Log.w("ConversationAdapter","bindViewHolder");
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_MESSAGE_SENT:
@@ -96,8 +96,8 @@ public class ConversationAdapter extends RecyclerView.Adapter {
             timeText = (TextView) itemView.findViewById(R.id.text_message_time);
         }
 
-        void bind(UserMessage message) {
-            messageText.setText(message.getContent());
+        void bind(Message message) {
+            messageText.setText(message.getBody());
 
             // Format the stored timestamp into a readable String using method.
             //MIGHT NOT WORK
@@ -119,13 +119,13 @@ public class ConversationAdapter extends RecyclerView.Adapter {
             profileImage = (ImageView) itemView.findViewById(R.id.image_message_profile);
         }
 
-        void bind(UserMessage message) {
-            messageText.setText(message.getContent());
+        void bind(Message message) {
+            messageText.setText(message.getBody());
 
             // Format the stored timestamp into a readable String using method.
            // timeText.setText("11:00");
 
-            nameText.setText(message.getUserName());
+            nameText.setText(message.getSender().getName());
 
             // Insert the profile image from the URL into the ImageView.
             //Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage);
