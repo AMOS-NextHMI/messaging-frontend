@@ -57,7 +57,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
+        Button conversationButton = findViewById(R.id.conversationButton);
+        conversationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mBound) {
+                    launchConversationListActivity("Epstien didn't kill himself.");
+                }
+            }
+        });
 
         createNotificationChannel();
 
@@ -119,5 +127,15 @@ public class MainActivity extends AppCompatActivity {
 
         // notificationId is a unique int for each notification that you must define
         notificationManager.notify(123, builder.build());
+    }
+
+    /**
+     * Launches a conversation list and passes it a TBD value
+     */
+    private void launchConversationListActivity(String value) {
+        // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
+        Intent myIntent = new Intent(MainActivity.this, ConversationsListActivity.class);
+        myIntent.putExtra("key", value); //Optional parameters - This can be used to pass parameters to the new activity.
+        MainActivity.this.startActivity(myIntent);
     }
 }
