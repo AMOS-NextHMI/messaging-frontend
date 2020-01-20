@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--- This is where I got the icons.  The website claims have open source ones
+            We still need to check.
+            https://feathericons.com/ -->
+
+    <item android:id="@+id/action_search"
+        android:icon="@drawable/ic_action_search"
+        android:title="@string/action_search"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.widget.SearchView" />
+
+    <item android:id="@+id/action_add_conversation"
+        android:icon="@drawable/ic_action_add_conversation"
+        android:title="@string/action_add_conversation"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_settings"
+        android:icon="@drawable/ic_action_settings"
+        android:title="@string/action_settings"
+        app:showAsAction="ifRoom" />
+</menu>
