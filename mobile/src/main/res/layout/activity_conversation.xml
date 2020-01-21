@@ -7,15 +7,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ConversationActivity">
-
-
-
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
+        android:id="@+id/linear_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:minHeight="48dp"
+        android:background="#ffffff"
+        tools:ignore="MissingConstraints">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbarBabyy"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        tools:ignore="MissingConstraints">
+        <Button
+            android:id="@+id/return_button"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_width="64dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:layout_marginLeft="15dp"
+            android:drawableLeft="@drawable/ic_action_search" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+    </LinearLayout>
 
 
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+    <!-- A horizontal line between the chatbox and RecyclerView -->
+    <androidx.core.widget.NestedScrollView
+
+        android:layout_width="match_parent"
+
+        android:layout_height="621dp"
+        android:clipToPadding="true"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true"
+
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+
+
+        app:layout_constraintTop_toBottomOf="@+id/linear_layout">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -32,7 +65,6 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- A horizontal line between the chatbox and RecyclerView -->
     <View
         android:layout_width="0dp"
         android:layout_height="2dp"
