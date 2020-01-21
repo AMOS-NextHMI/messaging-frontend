@@ -29,7 +29,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextViewConversationName"
-            android:textSize="32dp" />
+            android:textColor="@android:color/black"
+            android:textSize="32dp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textViewLastMessage"
@@ -37,6 +39,7 @@
             android:layout_height="wrap_content"
             android:text="TextViewLastMessage"
             android:textSize="24dp" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -141,7 +141,7 @@ public class ConversationsListActivity extends AppCompatActivity {
 
 
     /**
-     * returns a list of all messages in a conversation
+//     * returns a list of all messages in a conversation
      */
     private ArrayList<MetaConversation> get_conversation_list() {
         //TODO

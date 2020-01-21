@@ -1,35 +1,27 @@
 package com.example.messaging_frontend;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
 
 public class MessageService extends Service {
-    // See https://developer.android.com/guide/components/services for help
+    // For help see:
+    // https://developer.android.com/guide/components/services and
+    // https://developer.android.com/guide/components/bound-services
+
+    private static final String TAG = "MessageService";
     private final IBinder binder = new LocalBinder();
+    private OkHttpClient client;
+    private WebSocket ws;
 
     // The binder which we give to the client via onBind()
     public class LocalBinder extends Binder {
@@ -41,17 +33,13 @@ public class MessageService extends Service {
 
     @Override
     public void onCreate() {
-        // Service normally runs in the process's main thread, use HandlerThread if not desired
-        // Do something here...
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        // No binding implemented yet, so return null for now
         return binder;
     }
 
-    // Example for onStartCommand
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
@@ -64,61 +52,57 @@ public class MessageService extends Service {
         Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
     }
 
-    // TODO: Remove later
     public void testMethod() {
         Toast.makeText(this, "hello, this is the background service", Toast.LENGTH_SHORT).show();
     }
 
-    public void sendHttpTestMessage() {
-        // https://stackoverflow.com/questions/33573803/how-to-send-a-post-request-using-volley-with-string-body
-        try {
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
-            String URL = "https://ptsv2.com/t/6gmv1-1578593084/post";
-            JSONObject jsonBody = new JSONObject();
-            jsonBody.put("Title", "Android Volley Demo");
-            jsonBody.put("Author", "BNK");
-            final String requestBody = jsonBody.toString();
+    // Open and maintain websocket, for help see https://medium.com/@ssaurel/learn-to-use-websockets-on-android-with-okhttp-ba5f00aea988
+    // Currently using echo-test-server wss://echo.websocket.org
+    public final class WebSocketListenerHelper extends WebSocketListener {
+        private static final int NORMAL_CLOSURE_STATUS = 1000;
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.i("VOLLEY", response);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("VOLLEY", error.toString());
-                }
-            }) {
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
+        @Override
+        public void onOpen(WebSocket webSocket, okhttp3.Response response) {
+            webSocket.send("Hello!");
+            Log.i(TAG, "SENT: " + "Hello!");
+        }
 
-                @Override
-                public byte[] getBody() throws AuthFailureError {
-                    try {
-                        return requestBody == null ? null : requestBody.getBytes("utf-8");
-                    } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
-                        return null;
-                    }
-                }
+        @Override
+        public void onMessage(WebSocket webSocket, String text) {
+            Log.i(TAG, "RECEIVED: " + text);
+        }
 
-                @Override
-                protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                    String responseString = "";
-                    if (response != null) {
-                        responseString = String.valueOf(response.statusCode);
-                        // can get more details such as response.headers
-                    }
-                    return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                }
-            };
+        @Override
+        public void onMessage(WebSocket webSocket, ByteString bytes) {
+            Log.i(TAG, "RECEIVED BYTES: " + bytes.hex());
+        }
 
-            requestQueue.add(stringRequest);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        @Override
+        public void onClosing(WebSocket webSocket, int code, String reason) {
+            Log.i(TAG, "CLOSING: " + code + " / " + reason);
+            webSocket.close(NORMAL_CLOSURE_STATUS, null);
+        }
+
+        @Override
+        public void onFailure(WebSocket webSocket, Throwable t, okhttp3.Response response) {
+            Log.i(TAG, "ERROR: " + t.getMessage());
+        }
+    }
+
+    public void startWebSocket(String url) {
+        Request request = new Request.Builder().url(url).build();
+        WebSocketListenerHelper listener = new WebSocketListenerHelper();
+        client = new OkHttpClient();
+        ws = client.newWebSocket(request, listener);
+        //client.dispatcher().executorService().shutdown();
+    }
+
+    public void sendRequest(String request) {
+        if (ws != null) {
+            ws.send(request);
+            Log.i(TAG, "SENT: " + request);
+        } else {
+            Log.i(TAG, "ws == null");
         }
     }
 }

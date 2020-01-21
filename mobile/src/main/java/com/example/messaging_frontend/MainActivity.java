@@ -15,8 +15,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
 import android.widget.Button;
-
-import com.google.android.material.snackbar.Snackbar;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
     // TODO: outsource notifications
@@ -29,42 +28,52 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        createNotificationChannel();
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //Send notification on button press
-        Button button = findViewById(R.id.button);
+        //Buttons
+        Button button = findViewById(R.id.notificationButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                sendNotification();
-
-                //The value passed to the conv. list activity should be determined later after discussing it with the rest of the team.
-                launchConversationListActivity("Epstien didn't kill himself.");
-                if(mBound){
-                    mService.testMethod();
-                    mService.sendHttpTestMessage();
+                sendNotification();
+            }
+        });
+        final EditText editText = findViewById(R.id.editText);
+        Button openSocketButton = findViewById(R.id.openSocketButton);
+        openSocketButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mBound) {
+                    mService.startWebSocket("wss://echo.websocket.org");
                 }
-
+            }
+        });
+        Button sendButton = findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mBound) {
+                    mService.sendRequest(editText.getText().toString());
+                }
+            }
+        });
+        Button conversationButton = findViewById(R.id.conversationButton);
+        conversationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mBound) {
+                    launchConversationListActivity("Epstien didn't kill himself.");
+                }
             }
         });
 
+        createNotificationChannel();
 
-        /* Service Code */
-
-        // Start Service
+        // Start and bind service (only bind would also be an option)
         Intent intent = new Intent(this, MessageService.class);
         startService(intent);
-
-        // Bind Service
-        // public abstract boolean bindService(Intent service, ServiceConnection conn, int flags);
-        // ServiceConnection, which monitors the connection with the service.
-        // The return value of bindService() indicates whether the requested service exists and whether the client is permitted access to it.
-
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
 
         if(mBound){
             mService.testMethod();
@@ -73,17 +82,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * Launches a conversation list and passes it a TBD value
-     */
-    private void launchConversationListActivity(String value) {
-        // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
-        Intent myIntent = new Intent(MainActivity.this, ConversationActivity.class);
-        myIntent.putExtra("key", value); //Optional parameters - This can be used to pass parameters to the new activity.
-        MainActivity.this.startActivity(myIntent);
-    }
 
-    /** Defines callbacks for service binding, passed to bindService() */
+
+    // Defines callbacks for service binding, passed to bindService()
     private ServiceConnection connection = new ServiceConnection() {
 
         @Override
@@ -135,5 +136,15 @@ public class MainActivity extends AppCompatActivity {
 
         // notificationId is a unique int for each notification that you must define
         notificationManager.notify(123, builder.build());
+    }
+
+    /**
+     * Launches a conversation list and passes it a TBD value
+     */
+    private void launchConversationListActivity(String value) {
+        // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
+        Intent myIntent = new Intent(MainActivity.this, ConversationsListActivity.class);
+        myIntent.putExtra("key", value); //Optional parameters - This can be used to pass parameters to the new activity.
+        MainActivity.this.startActivity(myIntent);
     }
 }
