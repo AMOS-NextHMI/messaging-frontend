@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     // TODO: outsource notifications
@@ -57,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        Button conversationButton = findViewById(R.id.conversationButton);
-        conversationButton.setOnClickListener(new View.OnClickListener() {
+        Button conversationListButton = findViewById(R.id.conversationListButton);
+        conversationListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mBound) {
@@ -66,8 +67,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        Button conversationButton = findViewById(R.id.conversationButton);
+        conversationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mBound) {
+                    launchConversationActivity("Feriel is  such an amazing  person.");
+                }
+            }
+        });
+
 
         createNotificationChannel();
+
+
 
         // Start and bind service (only bind would also be an option)
         Intent intent = new Intent(this, MessageService.class);
@@ -144,6 +157,12 @@ public class MainActivity extends AppCompatActivity {
     private void launchConversationListActivity(String value) {
         // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
         Intent myIntent = new Intent(MainActivity.this, ConversationsListActivity.class);
+        myIntent.putExtra("key", value); //Optional parameters - This can be used to pass parameters to the new activity.
+        MainActivity.this.startActivity(myIntent);
+    }
+    void launchConversationActivity(String value) {
+        // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
+        Intent myIntent = new Intent(MainActivity.this, ConversationActivity.class);
         myIntent.putExtra("key", value); //Optional parameters - This can be used to pass parameters to the new activity.
         MainActivity.this.startActivity(myIntent);
     }

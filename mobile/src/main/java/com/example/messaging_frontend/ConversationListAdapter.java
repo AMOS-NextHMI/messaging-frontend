@@ -1,5 +1,8 @@
 package com.example.messaging_frontend;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +19,30 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
     // TODO: Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
+
+
     public static class ConversationListViewHolder extends RecyclerView.ViewHolder { //TODO:
         // each data item is just a string in this case
         public TextView conversation_name, last_message;
         public ConversationListViewHolder(View v) {
             super(v);
             conversation_name = v.findViewById(R.id.textViewConversationName);
+            if(conversation_name!=null) {
+                conversation_name.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Context context = view.getContext();
+                        Intent  intent =  new Intent(context, ConversationActivity.class);
+                        intent.putExtra("ConversationID",1);
+                        ((Context) context).startActivity(intent);
+
+                    }
+                });
+            }
+
+
+
             last_message = v.findViewById(R.id.textViewLastMessage);
         }
     }
@@ -49,7 +70,6 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         // - replace the contents of the view with that element
         // TODO: introduce the missing compleixity
         MetaConversation metaConversation = this.mDataset.get(position);
-
         holder.last_message.setText(metaConversation.getLatestMessage().getBody()); //TODO: prone to bug if latest message doesn't exist.
         holder.conversation_name.setText(metaConversation.getContact().getName());
     }
@@ -59,4 +79,6 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
     public int getItemCount() {
         return mDataset.size();
     }
+
+
 }

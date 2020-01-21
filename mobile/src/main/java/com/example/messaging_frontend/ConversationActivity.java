@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -34,52 +35,55 @@ public class ConversationActivity extends AppCompatActivity {
     List<Message> messageList;
     Button sendButton;
     EditText messageSent;
+    Contact mSender;
+    Date mDate;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
-        messageList = mockMessageList();
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
 
+        messageList =  mockMessageList();
+        mSender = new Contact("feriel",2);
+        mDate = new Date();
         mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
         mMessageAdapter = new ConversationAdapter(this, messageList);
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
         mMessageRecycler.setAdapter(mMessageAdapter);
+        sendButton= (Button) findViewById(R.id.button_send);
 
-        /*This section of the code will be used once the send and receive functionalies are implemented*/
+        sendButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
 
-//        sendButton= (Button) findViewById(R.id.button_send);
-//        messageSent = (EditText) findViewById(R.id.text_chatbox);
-//        sendButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//
-//                String messageBody = messageSent.getText().toString();
-//
-//                Message messageSent = new Message(sender, messageBody, date);
-//                messageList.add(messageSent);
-//
-//            }
-//        });
+                send_message();
+
+
+            }
+        });
 
     }
 
     private List<Message> mockMessageList() {
-        List<Message> messageList = new ArrayList<>();
+         Bundle convID=  getIntent().getExtras();
 
-        Date date1 = new Date();
-        Contact sender = new Contact("Mahmoud",1);
-        Message message1 = new Message(sender,"Hey Feriel, how are you?", date1.getTime());
+         if(convID.get("ConversationID").equals(1)) {
+             List<Message> messageList = new ArrayList<>();
 
-        Date date2 = new Date();
-        Contact receiver = new Contact("Feriel",2);
-        Message message2 = new Message(receiver,"I'm tired but I will survive", date2.getTime());
+             Date date1 = new Date();
+             Contact sender = new Contact("Mahmoud", 1);
+             Message message1 = new Message(sender, "Hey Feriel, how are you?", date1.getTime());
 
-        messageList.add(message1);
-        messageList.add(message2);
+             Date date2 = new Date();
+             Contact receiver = new Contact("Feriel", 2);
+             Message message2 = new Message(receiver, "I'm tired but I will survive", date2.getTime());
 
-        return messageList;
+             messageList.add(message1);
+             messageList.add(message2);
+
+             return messageList;
+         }
+         return null;
     }
 
     /**
@@ -92,9 +96,14 @@ public class ConversationActivity extends AppCompatActivity {
 
     /**
      * handles the UI aspect of sending a message and sends out a send_message query.
-     * @param myMessage
+     * params can be added if/when needed
      */
-    private void send_message(Message myMessage){
+    private void send_message(){
+        messageSent = (EditText) findViewById(R.id.text_chatbox);
+        Message message = new Message(mSender, messageSent.getText().toString(), mDate.getTime());
+        messageSent.getText().clear();
+        messageList.add(message);
+        mMessageAdapter.notifyItemInserted(messageList.indexOf(message));
 
     }
 
