@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (mBound) {
-                    launchConversationListActivity("Epstien didn't kill himself.");
+                    launchConversationListActivity("Baby Yoda's 50.");
                 }
             }
         });
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (mBound) {
-                    launchConversationActivity("Feriel is  such an amazing  person.");
+                    launchConversationActivity("1");
                 }
             }
         });
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
     void launchConversationActivity(String value) {
         // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
         Intent myIntent = new Intent(MainActivity.this, ConversationActivity.class);
-        myIntent.putExtra("key", value); //Optional parameters - This can be used to pass parameters to the new activity.
+        myIntent.putExtra("conv_id", value); //Optional parameters - This can be used to pass parameters to the new activity.
         MainActivity.this.startActivity(myIntent);
     }
 }

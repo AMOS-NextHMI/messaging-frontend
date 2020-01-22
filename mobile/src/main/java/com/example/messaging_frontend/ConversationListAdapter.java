@@ -28,23 +28,6 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         public ConversationListViewHolder(View v) {
             super(v);
             conversation_name = v.findViewById(R.id.textViewConversationName);
-            // WHAT DOES THIS DO?
-            if(conversation_name!=null) {
-                conversation_name.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        Context context = view.getContext();
-                        Intent  intent =  new Intent(context, ConversationActivity.class);
-                        intent.putExtra("ConversationID",1);
-                        ((Context) context).startActivity(intent);
-
-                    }
-                });
-            }
-
-
-
             last_message = v.findViewById(R.id.textViewLastMessage);
         }
     }
@@ -60,14 +43,6 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         // create a new view
         View v = (View) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.view_conversationslistactivity_listitem, parent, false);
-//        v.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.i("Button list", "Click clack. Put money in bag" + );
-//
-//            }
-//        });
-//        ConversationListViewHolder vh = new ConversationListViewHolder(v);
         return new ConversationListViewHolder(v);
     }
 
@@ -81,14 +56,20 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
 
         holder.last_message.setText(mconversationOverview.getLatestMessage().getBody()); //TODO: prone to bug if latest message doesn't exist.
 //        holder.conversation_name.setText(mconversationOverview.getContact().getName());
-        holder.conversation_name.setText(String.valueOf(mconversationOverview.getConvID()));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.conversation_name.setText(mconversationOverview.getConvID());
+        if(holder.itemView != null) {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i("Button list", "Click clack. Put money in bag" + mconversationOverview.getConvID());
+                    Context context = v.getContext();
+                    Intent  intent =  new Intent(context, ConversationActivity.class);
+                    intent.putExtra("ConversationID", mconversationOverview.getConvID());
+                    ((Context) context).startActivity(intent);
+                }
+            });
+        }
 
-            @Override
-            public void onClick(View v) {
-                Log.i("Button list", "Click clack. Put money in bag" + String.valueOf(mconversationOverview.getConvID()));
-            }
-        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 
 /**
@@ -132,7 +133,7 @@ public class ConversationsListActivity extends AppCompatActivity {
     private void launchConversationActivity(ConversationOverview myConversationOverview) {
         // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
         Intent myIntent = new Intent(ConversationsListActivity.this, ConversationActivity.class);
-        myIntent.putExtra("key", myConversationOverview.toString()); //Optional parameters - This can be used to pass parameters to the new activity.
+        myIntent.putExtra("conv_id", myConversationOverview.getConvID());
         ConversationsListActivity.this.startActivity(myIntent);
     }
 
@@ -156,37 +157,37 @@ public class ConversationsListActivity extends AppCompatActivity {
         //TODO
         ArrayList<ConversationOverview> myConvList = new ArrayList<>();
 
-        ConversationOverview myConv = new_conv("Thomas Shelby", "665353", "By order of the peaky blinders", 1579127933);
+        ConversationOverview myConv = new_conv("Thomas Shelby", "1", "By order of the peaky blinders", new Date());
         myConvList.add(myConv);
 
-        myConv = new_conv("Arthur Shelby", "665354", "Linda!", 1579127920);
-        myConvList.add(myConv);
-
-
-        myConv = new_conv("John Shelby", "665355", "", 1579126033);
+        myConv = new_conv("Arthur Shelby", "U665354", "Linda!", new Date());
         myConvList.add(myConv);
 
 
-        myConv = new_conv("Muh boy2", "665357", "I didn't do it.", 1579127800);
+        myConv = new_conv("John Shelby", "665355", "", new Date());
         myConvList.add(myConv);
 
-        myConv = new_conv("Muh boy3", "665358", "I didn't do it.", 1579127223);
+
+        myConv = new_conv("Muh boy2", "665357", "I didn't do it.", new Date());
         myConvList.add(myConv);
 
-        myConv = new_conv("Muh boy4", "665359", "I didn't do it.", 1579127132);
+        myConv = new_conv("Muh boy3", "665358", "I didn't do it.", new Date());
         myConvList.add(myConv);
 
-        myConv = new_conv("Muh boy5", "665360", "I didn't do it.", 1579124252);
+        myConv = new_conv("Muh boy4", "665359", "I didn't do it.", new Date());
         myConvList.add(myConv);
 
-        myConv = new_conv("Muh boy6", "665361", "I didn't do it.", 1579128763);
+        myConv = new_conv("Muh boy5", "665360", "I didn't do it.", new Date());
+        myConvList.add(myConv);
+
+        myConv = new_conv("Muh boy6", "665361", "I didn't do it.", new Date());
         myConvList.add(myConv);
 
         return myConvList;
     }
 
 
-    public ConversationOverview new_conv(String name, String id, String body, long timeStamp){
+    public ConversationOverview new_conv(String name, String id, String body, Date timeStamp){
         Contact myContact = new Contact(name, id);
 //        Message myMessage = new Message.Builder()
 //                .setBody(body)
@@ -203,6 +204,7 @@ public class ConversationsListActivity extends AppCompatActivity {
         ConversationOverview myConv = ConversationOverview.Builder.newInstance()
 //                .setMyContact(myContact)
                 .setLatestMessage(myMessage)
+                .setConvID(id)
                 .build();
 
         return myConv;
@@ -233,7 +235,7 @@ public class ConversationsListActivity extends AppCompatActivity {
         Contact myContact = new Contact("Thomas Shelby", "665151");
         ConvMessage convMessage = ConvMessage.Builder.newInstance()
                 .setBody("Hey, ho, let's go.")
-                .setTime_stamp(665151)
+                .setTime_stamp(new Date())
                 .setConvID("Conv ID example")
                 .setSender(myContact)
                 .build();

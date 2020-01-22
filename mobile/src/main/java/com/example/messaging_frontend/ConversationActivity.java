@@ -38,7 +38,7 @@ public class ConversationActivity extends AppCompatActivity {
      */
     private RecyclerView mMessageRecycler;
     private ConversationAdapter mMessageAdapter;
-    List<Message> messageList;
+    List<ConvMessage> messageList;
     Button sendButton;
     Button returnButton;
     EditText messageSent;
@@ -46,16 +46,23 @@ public class ConversationActivity extends AppCompatActivity {
     Contact mReceiver;
     Date mDate;
 
+    private String conv_id = "1"; // TODO: ID is missing.  Should be initialized as empty string.
+
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
 
+//        conv_id = new String(getIntent().getByteArrayExtra("conv_id")); // TODO: ID is missing.
+        /* hard coded info starts -- They should be queried using the conv_id */
         messageList =  mockMessageList();
-        mSender = new Contact("Feriel",2);
-        mReceiver = new Contact("Mahmoud",3);
+        mSender = new Contact("Feriel","2");
+        mReceiver = new Contact("Mahmoud","3");
         mDate = new Date();
+        /* hard coded info ends */
+
+
         mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
         mMessageAdapter = new ConversationAdapter(this, messageList);
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -88,50 +95,76 @@ public class ConversationActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private List<Message> mockMessageList() {
+
+    /**
+     * creates dummy messages for testing purposes.
+     * @return
+     */
+    private List<ConvMessage> mockMessageList() {
          Bundle convID=  getIntent().getExtras();
          if(convID.containsKey("ConversationID")) {
             //this will be dynamic once we have the actual messages
-             if (convID.get("ConversationID").equals(1)) {
-                 List<Message> messageList = new ArrayList<>();
+             if (convID.get("ConversationID").equals("1")) { /* hard coded ID */
 
-                 Date date1 = new Date();
-                 Contact sender = new Contact("Mahmoud", 1);
-                 Message message1 = new Message(sender, "Hey Feriel, how are you?", date1.getTime());
+                 /* hard coded info begins */
+                 List<ConvMessage> messageList = new ArrayList<>();
+                 Date date1 = new Date(); // TODO: CHANGE TIME FORMAT TO A BETTER ONE
+                 Contact sender = new Contact("Mahmoud", "1");
 
-                 Date date2 = new Date();
-                 Contact receiver = new Contact("Feriel", 2);
-                 Message message2 = new Message(receiver, "I'm tired but I will survive", date2.getTime());
+                 ConvMessage message1 = ConvMessage.Builder.newInstance()
+                         .setBody("Hey Feriel, how are you?")
+                         .setConvID("112")
+                         .setTime_stamp(date1)
+                         .setSender(sender)
+                         .build();
+
+
+                 Date date2 = new Date(); // TODO: CHANGE TIME FORMAT TO A BETTER ONE
+                 Contact receiver = new Contact("Feriel", "2");
+                 ConvMessage message2 = ConvMessage.Builder.newInstance()
+                         .setBody("I'm tired but I will survive")
+                         .setConvID("112")
+                         .setTime_stamp(date2)
+                         .setSender(receiver)
+                         .build();
 
                  messageList.add(message1);
                  messageList.add(message2);
-
+                 /* hard coded info ends */
                  return messageList;
              }
          }
-
          //I created this to test directly
          else{
-             List<Message> messageList = new ArrayList<>();
+             List<ConvMessage> messageList = new ArrayList<>();
 
              Date date1 = new Date();
-             Contact sender = new Contact("Mahmoud", 1);
-             Message message1 = new Message(sender, "Hey Feriel, how are you?", date1.getTime());
+             Contact sender = new Contact("Mahmoud", "1");
+             ConvMessage message1 = ConvMessage.Builder.newInstance()
+                     .setBody("Hey Feriel, how are you?")
+                     .setConvID("112")
+                     .setSender(sender)
+                     .setTime_stamp(date1)
+                     .build();
 
              Date date2 = new Date();
-             Contact receiver = new Contact("Feriel", 2);
-             Message message2 = new Message(receiver, "I'm tired but I will survive", date2.getTime());
+             Contact receiver = new Contact("Feriel", "2");
+             ConvMessage message2 = ConvMessage.Builder.newInstance()
+                     .setBody("I'm tired but I will survive")
+                     .setConvID("112")
+                     .setSender(receiver)
+                     .setTime_stamp(date2)
+                     .build();
 
              messageList.add(message1);
              messageList.add(message2);
 
              return messageList;
          }
-
-
-
          return null;
     }
+
+
 
     /**
      * returns a list of all messages in a conversation
@@ -147,11 +180,22 @@ public class ConversationActivity extends AppCompatActivity {
      */
     private void send_message(){
         messageSent = (EditText) findViewById(R.id.text_chatbox);
-        Message message = new Message(mSender, messageSent.getText().toString(), mDate.getTime());
+        ConvMessage UImessage = ConvMessage.Builder.newInstance()
+                .setBody(messageSent.getText().toString())
+                .setConvID(conv_id)
+                .setSender(mSender)
+                .setTime_stamp(new Date())
+                .build();
         messageSent.getText().clear();
-        messageList.add(message);
-        mMessageAdapter.notifyItemInserted(messageList.indexOf(message));
+        messageList.add(UImessage);
+        mMessageAdapter.notifyItemInserted(messageList.indexOf(UImessage));
 
+        // TODO: send out a query
+        Message queryMessage = Message.Builder.newInstance()
+                .setBody(UImessage.getBody())
+                .setConvID(UImessage.getConvID())
+                .setTime_stamp(UImessage.getTimeStamp())
+                .build();
     }
 
 }

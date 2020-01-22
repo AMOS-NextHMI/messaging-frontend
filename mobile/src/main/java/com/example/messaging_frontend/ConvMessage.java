@@ -1,10 +1,12 @@
 package com.example.messaging_frontend;
 
+import java.util.Date;
+
 public class ConvMessage {
     private Contact sender;
     private String convID;
     private String body;
-    private long time_stamp;
+    private Date time_stamp;
 
 
     public ConvMessage(Builder builder) {
@@ -14,14 +16,10 @@ public class ConvMessage {
         this.convID = builder.convID;
     }
 
-    public String getBody() {
-        return body;
-    }
-
     public static class Builder {
 
         private String body;
-        private long time_stamp;
+        private Date time_stamp;
         private String convID;
         private Contact sender;
 
@@ -37,7 +35,7 @@ public class ConvMessage {
             return this;
         }
 
-        public Builder setTime_stamp(long val) {
+        public Builder setTime_stamp(Date val) {
             time_stamp = val;
             return this;
         }
@@ -58,5 +56,21 @@ public class ConvMessage {
     }
 
 
+    // getters
+    public String getBody() {
+        return body;
+    }
+
+    public Contact getSender() {
+        return sender;
+    }
+
+    public String getConvID() {
+        return convID;
+    }
+
+    public Date getTimeStamp() {
+        return this.time_stamp;
+    }
 
 }

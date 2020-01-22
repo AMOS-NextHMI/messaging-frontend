@@ -1,5 +1,7 @@
 package com.example.messaging_frontend;
 
+import java.util.Date;
+
 /**
  * describes a singular message
  * Messages can be sorted by time_stamp
@@ -7,7 +9,7 @@ package com.example.messaging_frontend;
 public class Message {
     private String convID;
     private String body;
-    private long time_stamp;
+    private Date time_stamp;
 
     public Message(ConvMessage.Builder builder) {
     }
@@ -17,7 +19,7 @@ public class Message {
 
     public static class Builder {
         private String body;
-        private long time_stamp;
+        private Date time_stamp;
         private String convID;
 
         public static Message.Builder newInstance() {
@@ -34,7 +36,7 @@ public class Message {
             return this;
         }
 
-        public Message.Builder setTime_stamp(long val) {
+        public Message.Builder setTime_stamp(Date val) {
             time_stamp = val;
             return this;
         }
