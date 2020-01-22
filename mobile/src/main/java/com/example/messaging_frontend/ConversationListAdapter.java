@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationListAdapter.ConversationListViewHolder> {
-    private List<MetaConversation> mDataset;
+    private List<ConversationOverview> mDataset;
 
     // TODO: Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -27,17 +27,23 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ConversationListAdapter(List<MetaConversation> myConversationList) {
+    public ConversationListAdapter(List<ConversationOverview> myConversationList) {
         this.mDataset = myConversationList;
     }
 
     // Create new views (invoked by the layout manager)
     @Override
-    public ConversationListAdapter.ConversationListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ConversationListAdapter.ConversationListViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         // create a new view
         View v = (View) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.view_conversationslistactivity_listitem, parent, false);
-
+//        v.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.i("Button list", "Click clack. Put money in bag" + );
+//
+//            }
+//        });
 //        ConversationListViewHolder vh = new ConversationListViewHolder(v);
         return new ConversationListViewHolder(v);
     }
@@ -48,10 +54,18 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         // TODO: introduce the missing compleixity
-        MetaConversation metaConversation = this.mDataset.get(position);
+        final ConversationOverview mconversationOverview = this.mDataset.get(position);
 
-        holder.last_message.setText(metaConversation.getLatestMessage().getBody()); //TODO: prone to bug if latest message doesn't exist.
-        holder.conversation_name.setText(metaConversation.getContact().getName());
+        holder.last_message.setText(mconversationOverview.getLatestMessage().getBody()); //TODO: prone to bug if latest message doesn't exist.
+//        holder.conversation_name.setText(mconversationOverview.getContact().getName());
+        holder.conversation_name.setText(String.valueOf(mconversationOverview.getConvID()));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("Button list", "Click clack. Put money in bag" + String.valueOf(mconversationOverview.getConvID()));
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
