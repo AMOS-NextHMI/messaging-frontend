@@ -4,6 +4,11 @@ import android.os.Build;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 /**
  * Contains the meta data about a conversation.  Used as a cleaner way of sending Data
  * TODO: includes a contact instant and other relevant data, such as the latest message
@@ -69,4 +74,6 @@ public class MetaConversation {
     {
         return "Contact = " + this.myContact + ", latest Message = " + this.latestMessage + ".";
     }
+
+
 }

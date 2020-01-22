@@ -21,5 +21,9 @@ public class Message {
         return this.body;
     }
 
+    public Contact getSender() {
+        return this.sender;
+    }
+
     //TODO: set up getters and setters
 }

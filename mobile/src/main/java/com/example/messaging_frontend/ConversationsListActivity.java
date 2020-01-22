@@ -154,6 +154,7 @@ public class ConversationsListActivity extends AppCompatActivity {
     /**
      * returns a list of all messages in a conversation
      */
+
     private ArrayList<MetaConversation> get_dummy_conversation_list() {
         //TODO
         ArrayList<MetaConversation> myConvList = new ArrayList<>();
