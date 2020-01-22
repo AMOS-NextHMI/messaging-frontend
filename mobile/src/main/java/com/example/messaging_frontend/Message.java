@@ -5,21 +5,62 @@ package com.example.messaging_frontend;
  * Messages can be sorted by time_stamp
  */
 public class Message {
-    private Contact sender;
+    private String convID;
     private String body;
     private long time_stamp;
 
+    public Message(ConvMessage.Builder builder) {
+    }
+
 
     //TODO: set up a proper builder.
-    public Message(Contact sender, String body, long time_stamp) {
-        this.sender = sender;
-        this.body = body;
-        this.time_stamp = time_stamp;
+
+    public static class Builder {
+        private String body;
+        private long time_stamp;
+        private String convID;
+
+        public static Message.Builder newInstance() {
+            return new Message.Builder();
+        }
+
+        Builder() {}
+
+        // setters
+
+
+        public Message.Builder setBody(String val) {
+            body = val;
+            return this;
+        }
+
+        public Message.Builder setTime_stamp(long val) {
+            time_stamp = val;
+            return this;
+        }
+
+        public Message.Builder setConvID(String val) {
+            convID = val;
+            return this;
+        }
+
+        public Message build() {
+            return new Message(this);
+        }
     }
+
+
+    protected Message(Message.Builder builder) {
+        this.body = builder.body;
+        this.time_stamp = builder.time_stamp;
+        this.convID = builder.convID;
+    }
+
+
+    //TODO: set up getters and setters
 
     public String getBody() {
         return this.body;
     }
 
-    //TODO: set up getters and setters
 }
