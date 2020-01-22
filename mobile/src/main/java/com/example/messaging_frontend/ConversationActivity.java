@@ -1,12 +1,15 @@
 package com.example.messaging_frontend;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,6 +42,7 @@ public class ConversationActivity extends AppCompatActivity {
     Button returnButton;
     EditText messageSent;
     Contact mSender;
+    Contact mReceiver;
     Date mDate;
 
     @Override
@@ -48,7 +52,8 @@ public class ConversationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_conversation);
 
         messageList =  mockMessageList();
-        mSender = new Contact("feriel",2);
+        mSender = new Contact("Feriel",2);
+        mReceiver = new Contact("Mahmoud",3);
         mDate = new Date();
         mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
         mMessageAdapter = new ConversationAdapter(this, messageList);
@@ -62,17 +67,24 @@ public class ConversationActivity extends AppCompatActivity {
                 send_message();
             }
         });
-        returnButton =  (Button) findViewById(R.id.return_button);
 
-        returnButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Context context = v.getContext();
-                Intent intent =  new Intent(context, ConversationsListActivity.class);
-                ((Context) context).startActivity(intent);
-            }
-        });
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.conversation_toolbar);
+        toolbar.setTitle(mReceiver.getName());
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private List<Message> mockMessageList() {

@@ -16,20 +16,20 @@
         android:background="#ffffff"
         tools:ignore="MissingConstraints">
 
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbarBabyy"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        tools:ignore="MissingConstraints">
-        <Button
-            android:id="@+id/return_button"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_width="64dp"
-            android:layout_height="48dp"
-            android:gravity="center"
-            android:layout_marginLeft="15dp"
-            android:drawableLeft="@drawable/ic_action_search" />
+        android:layout_height="56dp">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/conversation_toolbar"
+            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:clipChildren="true">
+        </androidx.appcompat.widget.Toolbar>
+
+
 
     </com.google.android.material.appbar.AppBarLayout>
     </LinearLayout>
