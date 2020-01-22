@@ -2,9 +2,9 @@ package com.example.messaging_frontend;
 
 public class Contact {
     private String name;
-    private int id;
+    private String id;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -12,7 +12,7 @@ public class Contact {
         return name;
     }
 
-    public Contact(String name, int id){
+    public Contact(String name, String id){
         this.name = name;
         this.id = id;
     }
