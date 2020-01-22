@@ -1,6 +1,9 @@
 package com.example.messaging_frontend;
 
 import android.util.Log;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +20,31 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
     // TODO: Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
+
+
     public static class ConversationListViewHolder extends RecyclerView.ViewHolder { //TODO:
         // each data item is just a string in this case
         public TextView conversation_name, last_message;
         public ConversationListViewHolder(View v) {
             super(v);
             conversation_name = v.findViewById(R.id.textViewConversationName);
+            // WHAT DOES THIS DO?
+            if(conversation_name!=null) {
+                conversation_name.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Context context = view.getContext();
+                        Intent  intent =  new Intent(context, ConversationActivity.class);
+                        intent.putExtra("ConversationID",1);
+                        ((Context) context).startActivity(intent);
+
+                    }
+                });
+            }
+
+
+
             last_message = v.findViewById(R.id.textViewLastMessage);
         }
     }
@@ -60,8 +82,8 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         holder.last_message.setText(mconversationOverview.getLatestMessage().getBody()); //TODO: prone to bug if latest message doesn't exist.
 //        holder.conversation_name.setText(mconversationOverview.getContact().getName());
         holder.conversation_name.setText(String.valueOf(mconversationOverview.getConvID()));
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 Log.i("Button list", "Click clack. Put money in bag" + String.valueOf(mconversationOverview.getConvID()));
@@ -74,4 +96,6 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
     public int getItemCount() {
         return mDataset.size();
     }
+
+
 }

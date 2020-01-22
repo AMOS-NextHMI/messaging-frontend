@@ -67,11 +67,18 @@ public class MessageService extends Service {
             Log.i(TAG, "SENT: " + "Hello!");
         }
 
+        /* The server notifies that a new message got received
+        @param text: Identifier of the conversation*/
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             Log.i(TAG, "RECEIVED: " + text);
-        }
 
+
+        }
+        /*
+        * The server notifies that a new message got received
+        * @param text: Identifier of the conversation
+        */
         @Override
         public void onMessage(WebSocket webSocket, ByteString bytes) {
             Log.i(TAG, "RECEIVED BYTES: " + bytes.hex());
@@ -96,7 +103,9 @@ public class MessageService extends Service {
         ws = client.newWebSocket(request, listener);
         //client.dispatcher().executorService().shutdown();
     }
-
+    /*
+    * The app informs the server that a new message was sent
+    * */
     public void sendRequest(String request) {
         if (ws != null) {
             ws.send(request);
@@ -105,4 +114,8 @@ public class MessageService extends Service {
             Log.i(TAG, "ws == null");
         }
     }
+
+
+
+
 }
