@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 
+
 /**
  * This activity displays the chat screen with a contact.
  *
