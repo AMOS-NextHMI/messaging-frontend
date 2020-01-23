@@ -6,6 +6,7 @@ package com.example.messaging_frontend;
  */
 public class Message {
     private Contact sender;
+
     private String body;
     private long time_stamp;
 

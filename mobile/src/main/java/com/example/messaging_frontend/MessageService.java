@@ -70,6 +70,7 @@ public class MessageService extends Service {
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             Log.i(TAG, "RECEIVED: " + text);
+
         }
 
         @Override

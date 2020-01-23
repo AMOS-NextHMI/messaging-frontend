@@ -8,15 +8,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -74,6 +82,40 @@ public class ConversationActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        Retrofit retrofit= new Retrofit.Builder()
+                .baseUrl("https://jsonplaceholder.typicode.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        Call<List<Message>> call = jsonPlaceHolderApi.getMessages();
+        //call.execute() runs the call on the main  thread
+        call.enqueue(new Callback<List<Message>>() {
+            @Override
+            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                if(!response.isSuccessful()){
+                  Log.i("ConversationActivity", String.valueOf(response.code()));
+                  return;
+                }
+                List<Message> messages  = response.body();
+                for (Message m: messages) {
+                    String content = "";
+                    content += "ID: " + m.getSender().getId()+"\n";
+                    content += "Name: " + m.getSender().getName()+"\n";
+                    content += "Text:" + m.getBody()+"\n\n";
+                    Log.i("ConversationActivity",content);
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Message>> call, Throwable t) {
+                Log.i("ConversationActivity",t.getMessage());
+            }
+        });
+
+
 
 
     }
