@@ -59,7 +59,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
 
         //DELETE
 
-        if (message.getContactID() == 1 ){
+        if (message.getUserID() == 1 ){
 
             // If the current user is the sender of the message
 
@@ -150,7 +150,9 @@ public class ConversationAdapter extends RecyclerView.Adapter {
            // timeText.setText("11:00");
 
            //UNCOMMENT nameText.setText(message.getSender().getName());
-            nameText.setText(message.getContactID()); //DELETE
+
+
+            nameText.setText(String.valueOf(message.getUserID())); //DELETE
 
             // Insert the profile image from the URL into the ImageView.
             //Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage);

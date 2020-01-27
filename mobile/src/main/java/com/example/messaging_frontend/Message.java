@@ -29,47 +29,42 @@ public class Message {
 //    //TODO: set up getters and setters
 
 
-    private int contactID;
-    private int id;
+    private int userID;
+
     private String title;
-    private Boolean completed;
+    private String body;
 
-       public Message(int contactID,int id,String title,Boolean completed) {
-            this.contactID = contactID;
-            this.id = id;
+       public Message(int userID,String title,String body) {
+            this.userID = userID;
+
             this.title = title;
-            this.completed=completed;
+            this.body=body;
     }
 
-    public int getContactID() {
-        return contactID;
+    public String getBody() {
+        return body;
     }
 
-    public int getId() {
-        return id;
+    public int getUserID() {
+        return userID;
     }
+
 
     public String getTitle() {
         return title;
     }
 
-    public Boolean getCompleted() {
-        return completed;
+
+
+    public void setUserID(int contactID) {
+        this.userID = userID;
     }
 
-    public void setContactID(int contactID) {
-        this.contactID = contactID;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setCompleted(Boolean completed) {
-        this.completed = completed;
-    }
+
 }

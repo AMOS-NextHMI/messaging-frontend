@@ -37,6 +37,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * - text box
  * - send button that works if text box isn't empty
  */
+
+
+
+
+/*
+* Readapted the Message class to have the same structure as the Post Json files simulated by JSONPlaceHolder
+* in order to get back to the needed parameters and namings for the app,
+* 1. delete all parts of the code with //DELETE in front of them
+* 2. uncomment all parts of the code with //UNCOMMENT in front of them*/
 public class ConversationActivity extends AppCompatActivity {
 
     /**
@@ -113,12 +122,12 @@ public class ConversationActivity extends AppCompatActivity {
 //                }
                 for (Message m: messages) {
                     String content = "";
-                    content += "ContactID: " + m.getContactID()+"\n";
-                    content += "ID: " + m.getId()+"\n";
+                    content += "UserID: " + m.getUserID()+"\n";
+
                     content += "Title:" + m.getTitle()+"\n";
-                    content += "Completed:" + m.getCompleted()+"\n\n";
+                    content += "Body:" + m.getBody()+"\n\n";
                     Log.i("ConversationActivityMESSAGE",content);
-                    messageList.add(new Message(m.getContactID(),m.getId(),m.getTitle(),m.getCompleted()));
+                    messageList.add(new Message(m.getUserID(),m.getTitle(),m.getBody()));
 
                 }
 
@@ -213,7 +222,7 @@ public class ConversationActivity extends AppCompatActivity {
 
         messageSent = (EditText) findViewById(R.id.text_chatbox);
 
-        Message message = new Message(1,1, messageSent.getText().toString(),Boolean.TRUE);
+        Message message = new Message(1,"test", messageSent.getText().toString());
         messageSent.getText().clear();
         messageList.add(message);
         mMessageAdapter.notifyItemInserted(messageList.indexOf(message));
