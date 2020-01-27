@@ -146,59 +146,61 @@ public class ConversationsListActivity extends AppCompatActivity {
     private ArrayList<MetaConversation> get_conversation_list() {
         //TODO
 
-//        return new ArrayList<MetaConversation>();
 
-        return get_dummy_conversation_list();
+
+     //UNCOMMENT   return get_dummy_conversation_list();
+        return null;
     }
 
     /**
      * returns a list of all messages in a conversation
      */
 
-    private ArrayList<MetaConversation> get_dummy_conversation_list() {
-        //TODO
-        ArrayList<MetaConversation> myConvList = new ArrayList<>();
+//UNCOMMENT
+//    private ArrayList<MetaConversation> get_dummy_conversation_list() {
+//        //TODO
+//        ArrayList<MetaConversation> myConvList = new ArrayList<>();
+//
+//        MetaConversation myConv = new_conv("Thomas Shelby", 665353, "By order of the peaky blinders", 1579127933);
+//        myConvList.add(myConv);
+//
+//        myConv = new_conv("Arthur Shelby", 665354, "Linda!", 1579127920);
+//        myConvList.add(myConv);
+//
+//
+//        myConv = new_conv("John Shelby", 665355, "", 1579126033);
+//        myConvList.add(myConv);
+//
+//
+//        myConv = new_conv("Muh boy2", 665357, "I didn't do it.", 1579127800);
+//        myConvList.add(myConv);
+//
+//        myConv = new_conv("Muh boy3", 665358, "I didn't do it.", 1579127223);
+//        myConvList.add(myConv);
+//
+//        myConv = new_conv("Muh boy4", 665359, "I didn't do it.", 1579127132);
+//        myConvList.add(myConv);
+//
+//        myConv = new_conv("Muh boy5", 665360, "I didn't do it.", 1579124252);
+//        myConvList.add(myConv);
+//
+//        myConv = new_conv("Muh boy6", 665361, "I didn't do it.", 1579128763);
+//        myConvList.add(myConv);
+//
+//        return myConvList;
+//    }
 
-        MetaConversation myConv = new_conv("Thomas Shelby", 665353, "By order of the peaky blinders", 1579127933);
-        myConvList.add(myConv);
-
-        myConv = new_conv("Arthur Shelby", 665354, "Linda!", 1579127920);
-        myConvList.add(myConv);
-
-
-        myConv = new_conv("John Shelby", 665355, "", 1579126033);
-        myConvList.add(myConv);
-
-
-        myConv = new_conv("Muh boy2", 665357, "I didn't do it.", 1579127800);
-        myConvList.add(myConv);
-
-        myConv = new_conv("Muh boy3", 665358, "I didn't do it.", 1579127223);
-        myConvList.add(myConv);
-
-        myConv = new_conv("Muh boy4", 665359, "I didn't do it.", 1579127132);
-        myConvList.add(myConv);
-
-        myConv = new_conv("Muh boy5", 665360, "I didn't do it.", 1579124252);
-        myConvList.add(myConv);
-
-        myConv = new_conv("Muh boy6", 665361, "I didn't do it.", 1579128763);
-        myConvList.add(myConv);
-
-        return myConvList;
-    }
-
-
-    public MetaConversation new_conv(String name, int id, String body, long timeStamp){
-        Contact myContact = new Contact(name, id);
-        Message myMessage = new Message(myContact, body, timeStamp);
-        MetaConversation myConv = MetaConversation.Builder.newInstance()
-                .setMyContact(myContact)
-                .setLatestMessage(myMessage)
-                .build();
-
-        return myConv;
-    }
+//UNCOMMENT
+//    public MetaConversation new_conv(String name, int id, String body, long timeStamp){
+//        Contact myContact = new Contact(name, id);
+//        Message myMessage = new Message(myContact, body, timeStamp);
+//        MetaConversation myConv = MetaConversation.Builder.newInstance()
+//                .setMyContact(myContact)
+//                .setLatestMessage(myMessage)
+//                .build();
+//
+//        return myConv;
+//    }
 
 
     /**

@@ -70,7 +70,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         // - replace the contents of the view with that element
         // TODO: introduce the missing compleixity
         MetaConversation metaConversation = this.mDataset.get(position);
-        holder.last_message.setText(metaConversation.getLatestMessage().getBody()); //TODO: prone to bug if latest message doesn't exist.
+      //UNCOMMENT  holder.last_message.setText(metaConversation.getLatestMessage().getBody()); //TODO: prone to bug if latest message doesn't exist.
         holder.conversation_name.setText(metaConversation.getContact().getName());
     }
 

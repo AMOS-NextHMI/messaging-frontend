@@ -59,7 +59,11 @@ public class ConversationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
 
-        messageList =  mockMessageList();
+      //UNCOMMENT messageList =  mockMessageList();
+        messageList=new ArrayList<>();
+
+
+
         mSender = new Contact("Feriel",2);
         mReceiver = new Contact("Mahmoud",3);
         mDate = new Date();
@@ -84,7 +88,7 @@ public class ConversationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Retrofit retrofit= new Retrofit.Builder()
-                .baseUrl("https://jsonplaceholder.typicode.com/")
+                .baseUrl("https://jsonplaceholder.typicode.com/posts/1/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
@@ -94,24 +98,38 @@ public class ConversationActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
                 if(!response.isSuccessful()){
-                  Log.i("ConversationActivity", String.valueOf(response.code()));
+                  Log.i("ConversationActivityMESSAGE", "IMHERE");
                   return;
                 }
                 List<Message> messages  = response.body();
+                //UNCOMMENT
+//                for (Message m: messages) {
+//                    String content = "";
+//                    content += "ID: " + m.getSender().getId()+"\n";
+//                    content += "Name: " + m.getSender().getName()+"\n";
+//                    content += "Text:" + m.getBody()+"\n\n";
+//                    Log.i("ConversationActivity",content);
+//
+//                }
                 for (Message m: messages) {
                     String content = "";
-                    content += "ID: " + m.getSender().getId()+"\n";
-                    content += "Name: " + m.getSender().getName()+"\n";
-                    content += "Text:" + m.getBody()+"\n\n";
-                    Log.i("ConversationActivity",content);
+                    content += "ContactID: " + m.getContactID()+"\n";
+                    content += "ID: " + m.getId()+"\n";
+                    content += "Title:" + m.getTitle()+"\n";
+                    content += "Completed:" + m.getCompleted()+"\n\n";
+                    Log.i("ConversationActivityMESSAGE",content);
+                    messageList.add(new Message(m.getContactID(),m.getId(),m.getTitle(),m.getCompleted()));
 
                 }
+
+
+
 
             }
 
             @Override
             public void onFailure(Call<List<Message>> call, Throwable t) {
-                Log.i("ConversationActivity",t.getMessage());
+                Log.i("ConversationActivityMESSAGE",t.getMessage());
             }
         });
 
@@ -128,51 +146,50 @@ public class ConversationActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    private List<Message> mockMessageList() {
-         Bundle convID=  getIntent().getExtras();
-         if(convID.containsKey("ConversationID")) {
-            //this will be dynamic once we have the actual messages
-             if (convID.get("ConversationID").equals(1)) {
-                 List<Message> messageList = new ArrayList<>();
-
-                 Date date1 = new Date();
-                 Contact sender = new Contact("Mahmoud", 1);
-                 Message message1 = new Message(sender, "Hey Feriel, how are you?", date1.getTime());
-
-                 Date date2 = new Date();
-                 Contact receiver = new Contact("Feriel", 2);
-                 Message message2 = new Message(receiver, "I'm tired but I will survive", date2.getTime());
-
-                 messageList.add(message1);
-                 messageList.add(message2);
-
-                 return messageList;
-             }
-         }
-
-         //I created this to test directly
-         else{
-             List<Message> messageList = new ArrayList<>();
-
-             Date date1 = new Date();
-             Contact sender = new Contact("Mahmoud", 1);
-             Message message1 = new Message(sender, "Hey Feriel, how are you?", date1.getTime());
-
-             Date date2 = new Date();
-             Contact receiver = new Contact("Feriel", 2);
-             Message message2 = new Message(receiver, "I'm tired but I will survive", date2.getTime());
-
-             messageList.add(message1);
-             messageList.add(message2);
-
-             return messageList;
-         }
-
-
-
-         return null;
-    }
+//UNCOMMENT
+//    private List<Message> mockMessageList() {
+//         Bundle convID=  getIntent().getExtras();
+//         if(convID.containsKey("ConversationID")) {
+//            //this will be dynamic once we have the actual messages
+//             if (convID.get("ConversationID").equals(1)) {
+//                 List<Message> messageList = new ArrayList<>();
+//
+//                 Date date1 = new Date();
+//                 Contact sender = new Contact("Mahmoud", 1);
+//                 Message message1 = new Message(sender, "Hey Feriel, how are you?", date1.getTime());
+//
+//                 Date date2 = new Date();
+//                 Contact receiver = new Contact("Feriel", 2);
+//                 Message message2 = new Message(receiver, "I'm tired but I will survive", date2.getTime());
+//
+//                 messageList.add(message1);
+//                 messageList.add(message2);
+//
+//                 return messageList;
+//             }
+//         }
+//
+//         //I created this to test directly
+//         else{
+//             List<Message> messageList = new ArrayList<>();
+//
+//             Date date1 = new Date();
+//             Contact sender = new Contact("Mahmoud", 1);
+//             Message message1 = new Message(sender, "Hey Feriel, how are you?", date1.getTime());
+//
+//             Date date2 = new Date();
+//             Contact receiver = new Contact("Feriel", 2);
+//             Message message2 = new Message(receiver, "I'm tired but I will survive", date2.getTime());
+//
+//             messageList.add(message1);
+//             messageList.add(message2);
+//
+//             return messageList;
+//         }
+//
+//
+//         return null;
+//    }
 
     /**
      * returns a list of all messages in a conversation
@@ -187,11 +204,20 @@ public class ConversationActivity extends AppCompatActivity {
      * params can be added if/when needed
      */
     private void send_message(){
+//UNCOMMENT
+//        messageSent = (EditText) findViewById(R.id.text_chatbox);
+//        Message message = new Message(mSender, messageSent.getText().toString(), mDate.getTime());
+//        messageSent.getText().clear();
+//        messageList.add(message);
+//        mMessageAdapter.notifyItemInserted(messageList.indexOf(message));
+
         messageSent = (EditText) findViewById(R.id.text_chatbox);
-        Message message = new Message(mSender, messageSent.getText().toString(), mDate.getTime());
+
+        Message message = new Message(1,1, messageSent.getText().toString(),Boolean.TRUE);
         messageSent.getText().clear();
         messageList.add(message);
         mMessageAdapter.notifyItemInserted(messageList.indexOf(message));
+
 
     }
 

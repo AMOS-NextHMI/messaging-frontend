@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.messaging_frontend.data.model.LoggedInUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.widget.Toast.makeText;
@@ -25,11 +26,15 @@ public class ConversationAdapter extends RecyclerView.Adapter {
 
     public ConversationAdapter(Context context, List<Message> messageList) {
         mContext = context;
-        mMessageList = messageList;
+        if(messageList==null){
+            mMessageList = new ArrayList<>();
+        }
+        else  mMessageList = messageList;
     }
 
     @Override
     public int getItemCount() {
+
         return mMessageList.size();
     }
 
@@ -37,9 +42,25 @@ public class ConversationAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         Message message =  mMessageList.get(position);
+//UNCOMMENT
+//
+//        //if (message.getUserId().equals(loggedUser.getUserId()) ){
+//        if (message.getSender().getId() == 2 ){
+//
+//            // If the current user is the sender of the message
+//
+//            return VIEW_TYPE_MESSAGE_SENT;
+//        } else {
+//            // If some other user sent the message
+//
+//            return VIEW_TYPE_MESSAGE_RECEIVED;
+//        }
+        //        //if (message.getUserId().equals(loggedUser.getUserId()) ){
 
-        //if (message.getUserId().equals(loggedUser.getUserId()) ){
-        if (message.getSender().getId() == 2 ){
+        //DELETE
+
+        if (message.getContactID() == 1 ){
+
             // If the current user is the sender of the message
 
             return VIEW_TYPE_MESSAGE_SENT;
@@ -48,6 +69,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
 
             return VIEW_TYPE_MESSAGE_RECEIVED;
         }
+
     }
 
     // Inflates the appropriate layout according to the ViewType.
@@ -72,14 +94,16 @@ public class ConversationAdapter extends RecyclerView.Adapter {
     // Passes the message object to a ViewHolder so that the contents can be bound to UI.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Message message = (Message) mMessageList.get(position);
-        Log.w("ConversationAdapter","bindViewHolder");
-        switch (holder.getItemViewType()) {
-            case VIEW_TYPE_MESSAGE_SENT:
-                ((SentMessageHolder) holder).bind(message);
-                break;
-            case VIEW_TYPE_MESSAGE_RECEIVED:
-                ((ReceivedMessageHolder) holder).bind(message);
+        if(mMessageList!=null) {
+            Message message = (Message) mMessageList.get(position);
+            Log.w("ConversationAdapter", "bindViewHolder");
+            switch (holder.getItemViewType()) {
+                case VIEW_TYPE_MESSAGE_SENT:
+                    ((SentMessageHolder) holder).bind(message);
+                    break;
+                case VIEW_TYPE_MESSAGE_RECEIVED:
+                    ((ReceivedMessageHolder) holder).bind(message);
+            }
         }
     }
 
@@ -94,7 +118,9 @@ public class ConversationAdapter extends RecyclerView.Adapter {
         }
 
         void bind(Message message) {
-            messageText.setText(message.getBody());
+           //UNCOMMENT messageText.setText(message.getBody());
+
+            messageText.setText(message.getTitle()); //DELETE
 
             // Format the stored timestamp into a readable String using method.
             //MIGHT NOT WORK
@@ -117,12 +143,14 @@ public class ConversationAdapter extends RecyclerView.Adapter {
         }
 
         void bind(Message message) {
-            messageText.setText(message.getBody());
+            //UNCOMMENT messageText.setText(message.getBody());
 
+            messageText.setText(message.getTitle()); //DELETE
             // Format the stored timestamp into a readable String using method.
            // timeText.setText("11:00");
 
-            nameText.setText(message.getSender().getName());
+           //UNCOMMENT nameText.setText(message.getSender().getName());
+            nameText.setText(message.getContactID()); //DELETE
 
             // Insert the profile image from the URL into the ImageView.
             //Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage);
