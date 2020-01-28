@@ -128,7 +128,11 @@ public class ConversationAdapter extends RecyclerView.Adapter {
             nameText.setText(message.getSender().getName());
 
             // Insert the profile image from the URL into the ImageView.
-            //Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage);
+//            if (message.getSender().getProfileUrl() != null) {
+//                Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage);
+//            } else {
+//
+//            }
         }
     }
 }

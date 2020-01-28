@@ -1,5 +1,7 @@
 package com.example.messaging_frontend;
 
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.content.Context;
 import android.content.Intent;
@@ -7,8 +9,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,10 +29,12 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
     public static class ConversationListViewHolder extends RecyclerView.ViewHolder { //TODO:
         // each data item is just a string in this case
         public TextView conversation_name, last_message;
+        public ImageView profile_picture;
         public ConversationListViewHolder(View v) {
             super(v);
             conversation_name = v.findViewById(R.id.textViewConversationName);
             last_message = v.findViewById(R.id.textViewLastMessage);
+            profile_picture = v.findViewById(R.id.profile_list_picture);
         }
     }
 
@@ -57,11 +63,12 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         holder.last_message.setText(mconversationOverview.getLatestMessage().getBody()); //TODO: prone to bug if latest message doesn't exist.
 //        holder.conversation_name.setText(mconversationOverview.getContact().getName());
         holder.conversation_name.setText(mconversationOverview.getConvID());
+        holder.profile_picture.setImageResource(R.drawable.user);
         if(holder.itemView != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("Button list", "Click clack. Put money in bag" + mconversationOverview.getConvID());
+                    Log.i("Button list", "Click clack. Put money in bag. " + mconversationOverview.getConvID());
                     Context context = v.getContext();
                     Intent  intent =  new Intent(context, ConversationActivity.class);
                     intent.putExtra("ConversationID", mconversationOverview.getConvID());
