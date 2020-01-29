@@ -8,6 +8,7 @@ import com.example.messaging_frontend.data.model.LoggedInUser;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -49,7 +50,7 @@ public class LoginDataSource {
              *
              * JSON Payload Post
              * {
-             *   "username": "STRING",
+             *   "name": "STRING",
              *   "password": "STRING"
              * }
              *
@@ -57,13 +58,13 @@ public class LoginDataSource {
              * {
              *   "id": "STRING",
              *   "exp": "Date",
-             *   "username": "STRING"
+             *   "name": "STRING"
              * }
              */
             // send a login POST request
             Log.i("login", "login: sending request.");
 
-            String responsePayload = loginRequest("ws://localhost:8080/login", username, password);
+            String responsePayload = loginRequest("http://localhost/login", username, password);
 
             Log.i("login", "login: response received.  Parsing response.");
 
@@ -73,7 +74,7 @@ public class LoginDataSource {
             LoggedInUser loggedInUser =
                     new LoggedInUser(
                             responseJSON.getString("id"),
-                            responseJSON.getString("username"),
+                            responseJSON.getString("name"),
                             (Date) responseJSON.get("Date"));
 
             Log.i("login", "A brother made it");
@@ -98,19 +99,23 @@ public class LoginDataSource {
 
 //        connection.setConnectTimeout(CONNECT_TIMEOUT); // Why dis?
 //        connection.setReadTimeout(READ_TIMEOUT); // Why dis?
-//        connection.connect(); // Why dis?
-        Log.i("login", "login: login request: Creating payload .");
+        Log.i("login", "login: login request: Creating payload.");
 
         String jsonLoginString = new JSONObject()
-                .put("username", userName)
+                .put("name", userName)
                 .put("password", password)
                 .toString();
         // send payload
 
-        try(OutputStream outputStream = connection.getOutputStream()) {
-        byte[] input = jsonLoginString.getBytes(StandardCharsets.UTF_8);
-        outputStream.write(input, 0, input.length);
+        Log.i("login", "login: login request: Sending payload.");
+
+        try(DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream())) {
+            Log.i("login", "login: login request: Sending payload: putting payload in a byte array.");
+            byte[] input = jsonLoginString.getBytes(StandardCharsets.UTF_8);
+            Log.i("login", "login: login request: Sending payload: writing to output stream.");
+            outputStream.write(input, 0, input.length);
         }
+        Log.i("login", "login: login request: Awaiting response.");
 
         // receive response
         try(BufferedReader br = new BufferedReader(
