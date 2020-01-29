@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.example.messaging_frontend.R;
 import com.example.messaging_frontend.ui.login.LoginViewModel;
 import com.example.messaging_frontend.ui.login.LoginViewModelFactory;
@@ -40,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
+        final Button openRegistrationButton = findViewById(R.id.open_registration);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
@@ -117,11 +119,29 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         });
+
+        openRegistrationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: Launch a registration activity
+                Toast.makeText(getApplicationContext(), "Start registration fragment.", Toast.LENGTH_LONG).show();
+                // launch registration activity
+                // Fallunterscheidung:
+                    // 1. Activity returns without doing anything
+                    // 2. Activity returns with login info?
+                // if 1: continute as if nothing happened
+                    // nop
+                // if 2: login with new info
+                    // loginViewModel.login(usernameEditText.getText().toString(),
+                    //         passwordEditText.getText().toString());
+            }
+        });
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
+
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
 

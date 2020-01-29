@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.messaging_frontend.ui.login.LoginActivity;
+
 public class MainActivity extends AppCompatActivity {
     // TODO: outsource notifications
     // TODO: introduce a login activity, after which a ConversationsListActivity is called.
@@ -73,6 +75,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (mBound) {
                     launchConversationActivity("1");
+                }
+            }
+        });
+
+        Button loginButton = findViewById(R.id.login_Button);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mBound) {
+                    launchLoginActivity("1");
                 }
             }
         });
@@ -160,10 +172,19 @@ public class MainActivity extends AppCompatActivity {
         myIntent.putExtra("key", value); //Optional parameters - This can be used to pass parameters to the new activity.
         MainActivity.this.startActivity(myIntent);
     }
+
     void launchConversationActivity(String value) {
         // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
         Intent myIntent = new Intent(MainActivity.this, ConversationActivity.class);
         myIntent.putExtra("conv_id", value); //Optional parameters - This can be used to pass parameters to the new activity.
         MainActivity.this.startActivity(myIntent);
     }
+
+    void launchLoginActivity(String value) {
+        // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
+        Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
+        myIntent.putExtra("conv_id", value); //Optional parameters - This can be used to pass parameters to the new activity.
+        MainActivity.this.startActivity(myIntent);
+    }
+
 }

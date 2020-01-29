@@ -12,4 +12,7 @@
     <string name="action_settings">action_settings</string>
     <string name="action_add_conversation">action_add_conversation</string>
     <string name="action_search">action_search</string>
+    <string name="action_open_registration">register a new account</string>
+    <string name="confirm_password">confirm password</string>
+    <string name="prompt_username">username</string>
 </resources>

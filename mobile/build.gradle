@@ -31,4 +31,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'com.google.android.material:material:1.0.0'
+    // start of token stuff
+    implementation 'com.auth0.android:jwtdecode:1.4.0'
+    // end of token stuff
+    // start HTTP bull
+
+    // end HTTP bull
 }
