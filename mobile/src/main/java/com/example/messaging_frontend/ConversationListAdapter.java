@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationListAdapter.ConversationListViewHolder> {
@@ -26,6 +27,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         public TextView conversation_name, last_message;
         public ConversationListViewHolder(View v) {
             super(v);
+
             conversation_name = v.findViewById(R.id.textViewConversationName);
             if(conversation_name!=null) {
                 conversation_name.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +51,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public ConversationListAdapter(List<MetaConversation> myConversationList) {
+
         this.mDataset = myConversationList;
     }
 
@@ -77,7 +80,9 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        if (mDataset != null)
+            return mDataset.size();
+        else  return 0;
     }
 
 

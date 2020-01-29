@@ -2,11 +2,15 @@ package com.example.messaging_frontend;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -46,6 +50,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 * in order to get back to the needed parameters and namings for the app,
 * 1. delete all parts of the code with //DELETE in front of them
 * 2. uncomment all parts of the code with //UNCOMMENT in front of them*/
+
+
+
+/*REMINDER
+* CREATE ON DESTROY  METHOD AND DESTROYTHE RECEIVER */
 public class ConversationActivity extends AppCompatActivity {
 
     /**
@@ -61,6 +70,7 @@ public class ConversationActivity extends AppCompatActivity {
     Contact mSender;
     Contact mReceiver;
     Date mDate;
+    BroadcastReceiver br;
 
     @Override
 
@@ -68,8 +78,26 @@ public class ConversationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
 
+
       //UNCOMMENT messageList =  mockMessageList();
         messageList=new ArrayList<>();
+
+
+
+        br = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Action: " + intent.getAction() + "\n");
+                sb.append("URI: " + intent.toUri(Intent.URI_INTENT_SCHEME).toString() + "\n");
+                String log = sb.toString();
+                Log.i("Broadcastreceiver", log);
+                Toast.makeText(context, log, Toast.LENGTH_LONG).show();
+            }
+        };
+        registerReceiver(br, new IntentFilter("SERVER_NOTIFICATION"));
+
+
 
 
 
@@ -96,6 +124,8 @@ public class ConversationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        //CREATE A LISTENER FOR NOTIFICATION
+            //upon getting notified do all of this
         Retrofit retrofit= new Retrofit.Builder()
                 .baseUrl("https://jsonplaceholder.typicode.com/posts/1/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -107,7 +137,7 @@ public class ConversationActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
                 if(!response.isSuccessful()){
-                  Log.i("ConversationActivityMESSAGE", "IMHERE");
+
                   return;
                 }
                 List<Message> messages  = response.body();
@@ -126,7 +156,7 @@ public class ConversationActivity extends AppCompatActivity {
 
                     content += "Title:" + m.getTitle()+"\n";
                     content += "Body:" + m.getBody()+"\n\n";
-                    Log.i("ConversationActivityMESSAGE",content);
+                  //  Log.i("ConversationActivityMESSAGE",content);
                     messageList.add(new Message(m.getUserID(),m.getTitle(),m.getBody()));
 
                 }
@@ -154,6 +184,12 @@ public class ConversationActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(br);
+        super.onDestroy();
     }
 //UNCOMMENT
 //    private List<Message> mockMessageList() {

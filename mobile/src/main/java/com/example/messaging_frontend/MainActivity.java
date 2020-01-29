@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ComponentName;
@@ -13,7 +14,9 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -64,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (mBound) {
                     launchConversationListActivity("Epstien didn't kill himself.");
+                    Intent intent = new Intent("SERVER_NOTIFICATION");
+                    // You can also include some extra data.
+
                 }
             }
         });
@@ -74,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 if (mBound) {
                     launchConversationActivity("Feriel is  such an amazing  person.");
                 }
+
             }
         });
 
@@ -132,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
             // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
+
         }
     }
 
@@ -151,6 +159,10 @@ public class MainActivity extends AppCompatActivity {
         notificationManager.notify(123, builder.build());
     }
 
+
+
+
+
     /**
      * Launches a conversation list and passes it a TBD value
      */
@@ -165,5 +177,9 @@ public class MainActivity extends AppCompatActivity {
         Intent myIntent = new Intent(MainActivity.this, ConversationActivity.class);
         myIntent.putExtra("key", value); //Optional parameters - This can be used to pass parameters to the new activity.
         MainActivity.this.startActivity(myIntent);
+
+
     }
+
+
 }

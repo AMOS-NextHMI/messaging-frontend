@@ -1,11 +1,14 @@
 package com.example.messaging_frontend;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -58,7 +61,7 @@ public class MessageService extends Service {
 
     // Open and maintain websocket, for help see https://medium.com/@ssaurel/learn-to-use-websockets-on-android-with-okhttp-ba5f00aea988
     // Currently using echo-test-server wss://echo.websocket.org
-    public final class WebSocketListenerHelper extends WebSocketListener {
+    public class WebSocketListenerHelper extends WebSocketListener {
         private static final int NORMAL_CLOSURE_STATUS = 1000;
 
         @Override
@@ -67,16 +70,24 @@ public class MessageService extends Service {
             Log.i(TAG, "SENT: " + "Hello!");
         }
 
+        /*The server notifies  of a new message*/
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             Log.i(TAG, "RECEIVED: " + text);
 
         }
 
+
         @Override
         public void onMessage(WebSocket webSocket, ByteString bytes) {
             Log.i(TAG, "RECEIVED BYTES: " + bytes.hex());
+            Intent intent = new Intent("SERVER_NOTIFICATION");
+            //NOT THE BEST WAY TO DO IT, BUT I DONT KNOW HOW TO USE THE NOTIFICATION, FURKAN IMPLEMENTED THAT
+            Context context=getApplicationContext();
+            context.sendBroadcast(intent);
         }
+
+
 
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
