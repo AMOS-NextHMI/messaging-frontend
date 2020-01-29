@@ -31,6 +31,7 @@ public class LoginDataSource {
 
         try {
             // TODO: handle loggedInUser authentication
+            Log.i("login", "login: initialized.");
             /* mock up data
             LoggedInUser fakeUser =
                     new LoggedInUser(
@@ -60,7 +61,11 @@ public class LoginDataSource {
              * }
              */
             // send a login POST request
-            String responsePayload = loginRequest("http://130.149.172.169/login", username, password);
+            Log.i("login", "login: sending request.");
+
+            String responsePayload = loginRequest("ws://localhost:8080/login", username, password);
+
+            Log.i("login", "login: response received.  Parsing response.");
 
             // parse response
             JSONObject responseJSON = new JSONObject().getJSONObject(responsePayload);
@@ -82,22 +87,26 @@ public class LoginDataSource {
 
 
     private static String loginRequest(String ServerUrl, String userName, String password) throws Exception {
-        URL url = new URL(ServerUrl);
+        Log.i("login", "login: login request: Initializing URL.");
+        URL url = new URL(ServerUrl);  // TODO: This isn't working
+        Log.i("login", "login: login request: initialized URL, now defining connection.");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json; utf-8");
         connection.setRequestProperty("Accept", "application/json");
         connection.setDoOutput(true);
-        connection.setConnectTimeout(CONNECT_TIMEOUT); // Why dis?
-        connection.setReadTimeout(READ_TIMEOUT); // Why dis?
-        connection.connect(); // Why dis?
+
+//        connection.setConnectTimeout(CONNECT_TIMEOUT); // Why dis?
+//        connection.setReadTimeout(READ_TIMEOUT); // Why dis?
+//        connection.connect(); // Why dis?
+        Log.i("login", "login: login request: Creating payload .");
 
         String jsonLoginString = new JSONObject()
                 .put("username", userName)
                 .put("password", password)
                 .toString();
-
         // send payload
+
         try(OutputStream outputStream = connection.getOutputStream()) {
         byte[] input = jsonLoginString.getBytes(StandardCharsets.UTF_8);
         outputStream.write(input, 0, input.length);
