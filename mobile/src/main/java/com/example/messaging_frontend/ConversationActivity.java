@@ -10,25 +10,29 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import com.example.messaging_frontend.auth.AuthenticationInterceptor;
+import com.example.messaging_frontend.models.Contact;
+import com.example.messaging_frontend.models.Message;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
 
 
 /**
@@ -53,8 +57,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 
-/*REMINDER
-* CREATE ON DESTROY  METHOD AND DESTROYTHE RECEIVER */
 public class ConversationActivity extends AppCompatActivity {
 
     /**
@@ -62,43 +64,70 @@ public class ConversationActivity extends AppCompatActivity {
      * TODO: This activity uses the meta-conversation to then request the messages history and display it.
      */
     private RecyclerView mMessageRecycler;
+    private static String API_BASE_URL = "https://130.149.172.169/";
     private ConversationAdapter mMessageAdapter;
-    List<Message> messageList;
+    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    private static Retrofit.Builder builder =
+            new Retrofit.Builder()
+                    .baseUrl(API_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create());
+
+    private  static  Retrofit retrofit;
+
     Button sendButton;
-    Button returnButton;
     EditText messageSent;
+
+    List<Message> messageList;
     Contact mSender;
     Contact mReceiver;
     Date mDate;
+    String authKey;
+
+    JsonPlaceHolderApi jsonPlaceHolderApi;
     BroadcastReceiver br;
 
-    @Override
 
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
-
-
-      //UNCOMMENT messageList =  mockMessageList();
         messageList=new ArrayList<>();
+        authKey="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMzcwMTJhY2Q1ZTRiMDAyYTQyMDE1NSIsInVzZXJuYW1lIjoiYWxsZW4iLCJpYXQiOjE1ODA2NjMwODJ9.sBYcYnntsH_AGN-ULvXkqJAsmcLS-vVbvSzuSiv_qDU";
 
-
+        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
         br = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("Action: " + intent.getAction() + "\n");
-                sb.append("URI: " + intent.toUri(Intent.URI_INTENT_SCHEME).toString() + "\n");
-                String log = sb.toString();
-                Log.i("Broadcastreceiver", log);
-                Toast.makeText(context, log, Toast.LENGTH_LONG).show();
+               // Retrofit retrofit= createService(ConversationActivity.class);
+
+
+                Call<String> call = jsonPlaceHolderApi.getConversation(authKey);
+
+                call.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if(!response.isSuccessful()){
+
+                            return;
+                        }
+                        Log.i("Server","works");
+                    }
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.i("ConversationActivityMESSAGE",t.getMessage());
+                    }
+                });
+
+
+
             }
         };
+
+
         registerReceiver(br, new IntentFilter("SERVER_NOTIFICATION"));
-
-
-
 
 
         mSender = new Contact("Feriel",2);
@@ -114,6 +143,7 @@ public class ConversationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 send_message();
+
             }
         });
 
@@ -124,117 +154,26 @@ public class ConversationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        //CREATE A LISTENER FOR NOTIFICATION
-            //upon getting notified do all of this
-        Retrofit retrofit= new Retrofit.Builder()
-                .baseUrl("https://jsonplaceholder.typicode.com/posts/1/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-        Call<List<Message>> call = jsonPlaceHolderApi.getMessages();
-        //call.execute() runs the call on the main  thread
-        call.enqueue(new Callback<List<Message>>() {
-            @Override
-            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
-                if(!response.isSuccessful()){
-
-                  return;
-                }
-                List<Message> messages  = response.body();
-                //UNCOMMENT
-//                for (Message m: messages) {
-//                    String content = "";
-//                    content += "ID: " + m.getSender().getId()+"\n";
-//                    content += "Name: " + m.getSender().getName()+"\n";
-//                    content += "Text:" + m.getBody()+"\n\n";
-//                    Log.i("ConversationActivity",content);
-//
-//                }
-                for (Message m: messages) {
-                    String content = "";
-                    content += "UserID: " + m.getUserID()+"\n";
-
-                    content += "Title:" + m.getTitle()+"\n";
-                    content += "Body:" + m.getBody()+"\n\n";
-                  //  Log.i("ConversationActivityMESSAGE",content);
-                    messageList.add(new Message(m.getUserID(),m.getTitle(),m.getBody()));
-
-                }
-
-
-
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Message>> call, Throwable t) {
-                Log.i("ConversationActivityMESSAGE",t.getMessage());
-            }
-        });
-
-
-
-
     }
+
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // handle arrow click here
         if (item.getItemId() == android.R.id.home) {
             finish(); // close this activity and return to preview activity (if there is any)
         }
 
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     protected void onDestroy() {
         // Unregister since the activity is about to be closed.
         LocalBroadcastManager.getInstance(this).unregisterReceiver(br);
         super.onDestroy();
     }
-//UNCOMMENT
-//    private List<Message> mockMessageList() {
-//         Bundle convID=  getIntent().getExtras();
-//         if(convID.containsKey("ConversationID")) {
-//            //this will be dynamic once we have the actual messages
-//             if (convID.get("ConversationID").equals(1)) {
-//                 List<Message> messageList = new ArrayList<>();
-//
-//                 Date date1 = new Date();
-//                 Contact sender = new Contact("Mahmoud", 1);
-//                 Message message1 = new Message(sender, "Hey Feriel, how are you?", date1.getTime());
-//
-//                 Date date2 = new Date();
-//                 Contact receiver = new Contact("Feriel", 2);
-//                 Message message2 = new Message(receiver, "I'm tired but I will survive", date2.getTime());
-//
-//                 messageList.add(message1);
-//                 messageList.add(message2);
-//
-//                 return messageList;
-//             }
-//         }
-//
-//         //I created this to test directly
-//         else{
-//             List<Message> messageList = new ArrayList<>();
-//
-//             Date date1 = new Date();
-//             Contact sender = new Contact("Mahmoud", 1);
-//             Message message1 = new Message(sender, "Hey Feriel, how are you?", date1.getTime());
-//
-//             Date date2 = new Date();
-//             Contact receiver = new Contact("Feriel", 2);
-//             Message message2 = new Message(receiver, "I'm tired but I will survive", date2.getTime());
-//
-//             messageList.add(message1);
-//             messageList.add(message2);
-//
-//             return messageList;
-//         }
-//
-//
-//         return null;
-//    }
+
 
     /**
      * returns a list of all messages in a conversation
@@ -249,21 +188,23 @@ public class ConversationActivity extends AppCompatActivity {
      * params can be added if/when needed
      */
     private void send_message(){
-//UNCOMMENT
-//        messageSent = (EditText) findViewById(R.id.text_chatbox);
-//        Message message = new Message(mSender, messageSent.getText().toString(), mDate.getTime());
-//        messageSent.getText().clear();
-//        messageList.add(message);
-//        mMessageAdapter.notifyItemInserted(messageList.indexOf(message));
 
         messageSent = (EditText) findViewById(R.id.text_chatbox);
-
-        Message message = new Message(1,"test", messageSent.getText().toString());
+        Message message = new Message(mSender, messageSent.getText().toString(), mDate.getTime());
         messageSent.getText().clear();
         messageList.add(message);
         mMessageAdapter.notifyItemInserted(messageList.indexOf(message));
+        Call<Message> call = jsonPlaceHolderApi.sendMessage(authKey,"Test","Test",11);
+
 
 
     }
+
+
+
+
+
+
+
 
 }

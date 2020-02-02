@@ -59,62 +59,21 @@ public class MessageService extends Service {
         Toast.makeText(this, "hello, this is the background service", Toast.LENGTH_SHORT).show();
     }
 
-    // Open and maintain websocket, for help see https://medium.com/@ssaurel/learn-to-use-websockets-on-android-with-okhttp-ba5f00aea988
-    // Currently using echo-test-server wss://echo.websocket.org
-    public class WebSocketListenerHelper extends WebSocketListener {
-        private static final int NORMAL_CLOSURE_STATUS = 1000;
 
-        @Override
-        public void onOpen(WebSocket webSocket, okhttp3.Response response) {
-            webSocket.send("Hello!");
-            Log.i(TAG, "SENT: " + "Hello!");
-        }
-
-        /*The server notifies  of a new message*/
-        @Override
-        public void onMessage(WebSocket webSocket, String text) {
-            Log.i(TAG, "RECEIVED: " + text);
-
-        }
+    //ask server for the conversation
 
 
-        @Override
-        public void onMessage(WebSocket webSocket, ByteString bytes) {
-            Log.i(TAG, "RECEIVED BYTES: " + bytes.hex());
-            Intent intent = new Intent("SERVER_NOTIFICATION");
-            //NOT THE BEST WAY TO DO IT, BUT I DONT KNOW HOW TO USE THE NOTIFICATION, FURKAN IMPLEMENTED THAT
-            Context context=getApplicationContext();
-            context.sendBroadcast(intent);
-        }
-
-
-
-        @Override
-        public void onClosing(WebSocket webSocket, int code, String reason) {
-            Log.i(TAG, "CLOSING: " + code + " / " + reason);
-            webSocket.close(NORMAL_CLOSURE_STATUS, null);
-        }
-
-        @Override
-        public void onFailure(WebSocket webSocket, Throwable t, okhttp3.Response response) {
-            Log.i(TAG, "ERROR: " + t.getMessage());
-        }
+/*
+    @Override
+    public void onMessage(WebSocket webSocket, ByteString bytes) {
+        Log.i(TAG, "RECEIVED BYTES: " + bytes.hex());
+        Intent intent = new Intent("SERVER_NOTIFICATION");
+        //NOT THE BEST WAY TO DO IT, BUT I DONT KNOW HOW TO USE THE NOTIFICATION, FURKAN IMPLEMENTED THAT
+        Context context=getApplicationContext();
+        context.sendBroadcast(intent);
     }
+    */
 
-    public void startWebSocket(String url) {
-        Request request = new Request.Builder().url(url).build();
-        WebSocketListenerHelper listener = new WebSocketListenerHelper();
-        client = new OkHttpClient();
-        ws = client.newWebSocket(request, listener);
-        //client.dispatcher().executorService().shutdown();
-    }
 
-    public void sendRequest(String request) {
-        if (ws != null) {
-            ws.send(request);
-            Log.i(TAG, "SENT: " + request);
-        } else {
-            Log.i(TAG, "ws == null");
-        }
-    }
+
 }

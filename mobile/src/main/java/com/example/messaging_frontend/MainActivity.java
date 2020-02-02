@@ -161,8 +161,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
     /**
      * Launches a conversation list and passes it a TBD value
      */

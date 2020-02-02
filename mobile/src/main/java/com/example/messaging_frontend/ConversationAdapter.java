@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.messaging_frontend.data.model.LoggedInUser;
+import com.example.messaging_frontend.models.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,24 +43,10 @@ public class ConversationAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         Message message =  mMessageList.get(position);
-//UNCOMMENT
-//
-//        //if (message.getUserId().equals(loggedUser.getUserId()) ){
-//        if (message.getSender().getId() == 2 ){
-//
-//            // If the current user is the sender of the message
-//
-//            return VIEW_TYPE_MESSAGE_SENT;
-//        } else {
-//            // If some other user sent the message
-//
-//            return VIEW_TYPE_MESSAGE_RECEIVED;
-//        }
-        //        //if (message.getUserId().equals(loggedUser.getUserId()) ){
 
-        //DELETE
 
-        if (message.getUserID() == 1 ){
+        //if (message.getUserId().equals(loggedUser.getUserId()) ){
+        if (message.getSender().getId() == 2 ){
 
             // If the current user is the sender of the message
 
@@ -69,6 +56,9 @@ public class ConversationAdapter extends RecyclerView.Adapter {
 
             return VIEW_TYPE_MESSAGE_RECEIVED;
         }
+
+
+
 
     }
 
@@ -118,14 +108,9 @@ public class ConversationAdapter extends RecyclerView.Adapter {
         }
 
         void bind(Message message) {
-           //UNCOMMENT messageText.setText(message.getBody());
-
-            messageText.setText(message.getTitle()); //DELETE
-
+           messageText.setText(message.getBody());
             // Format the stored timestamp into a readable String using method.
-            //MIGHT NOT WORK
-
-//            timeText.setText((int) message.getCreatedAt());
+            // timeText.setText((int) message.getCreatedAt());
         }
     }
 
@@ -143,16 +128,12 @@ public class ConversationAdapter extends RecyclerView.Adapter {
         }
 
         void bind(Message message) {
-            //UNCOMMENT messageText.setText(message.getBody());
+            messageText.setText(message.getBody());
 
-            messageText.setText(message.getTitle()); //DELETE
             // Format the stored timestamp into a readable String using method.
            // timeText.setText("11:00");
 
-           //UNCOMMENT nameText.setText(message.getSender().getName());
-
-
-            nameText.setText(String.valueOf(message.getUserID())); //DELETE
+            nameText.setText(message.getSender().getName());
 
             // Insert the profile image from the URL into the ImageView.
             //Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage);

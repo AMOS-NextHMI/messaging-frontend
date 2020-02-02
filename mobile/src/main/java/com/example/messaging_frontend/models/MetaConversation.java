@@ -1,13 +1,4 @@
-package com.example.messaging_frontend;
-
-import android.os.Build;
-
-import androidx.annotation.NonNull;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+package com.example.messaging_frontend.models;
 
 /**
  * Contains the meta data about a conversation.  Used as a cleaner way of sending Data

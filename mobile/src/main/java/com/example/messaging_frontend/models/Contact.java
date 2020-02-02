@@ -1,8 +1,15 @@
-package com.example.messaging_frontend;
+package com.example.messaging_frontend.models;
 
 public class Contact {
     private String name;
     private int id;
+
+
+
+    public Contact(String name, int id){
+        this.name = name;
+        this.id = id;
+    }
 
     public int getId() {
         return id;
@@ -12,8 +19,11 @@ public class Contact {
         return name;
     }
 
-    public Contact(String name, int id){
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public void setId(int id) {
         this.id = id;
     }
 }
