@@ -12,11 +12,25 @@
     tools:context=".ui.login.LoginActivity">
 
     <EditText
-        android:id="@+id/register_email"
+        android:id="@+id/register_username"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="96dp"
+        android:layout_marginEnd="24dp"
+        android:autofillHints="@string/prompt_username"
+        android:hint="@string/prompt_username"
+        android:inputType="textPersonName"
+        android:selectAllOnFocus="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/register_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:autofillHints="@string/prompt_email"
         android:hint="@string/prompt_email"
@@ -24,21 +38,7 @@
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/register_username"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:autofillHints="@string/prompt_email"
-        android:hint="@string/prompt_email"
-        android:inputType="textPersonName"
-        android:selectAllOnFocus="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/register_email" />
+        app:layout_constraintTop_toBottomOf="@+id/register_username" />
 
     <EditText
         android:id="@+id/register_password"
@@ -55,7 +55,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.906"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/register_username" />
+        app:layout_constraintTop_toBottomOf="@+id/register_email" />
 
     <EditText
         android:id="@+id/register_password_confirm"

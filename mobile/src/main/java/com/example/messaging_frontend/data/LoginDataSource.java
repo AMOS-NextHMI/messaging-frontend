@@ -35,7 +35,7 @@ public class LoginDataSource {
 
     private static final int CONNECT_TIMEOUT = 4000;
     private static final int READ_TIMEOUT = 4000;
-    private static final String SERVER_URL = "http://130.149.172.169/login/";
+    private static final String SERVER_URL = "http://130.149.172.169/register/";
 //    private static final String SERVER_URL = "http://127.0.0.1/login";
 
     public Result<LoggedInUser> login(String email, String password) {
@@ -98,6 +98,67 @@ public class LoginDataSource {
         }
     }
 
+    public Result<LoggedInUser> register(String username, String email, String password) {
+
+
+        try {
+            // TODO: handle loggedInUser authentication
+            /* mock up data
+            LoggedInUser fakeUser =
+                    new LoggedInUser(
+                            java.util.UUID.randomUUID().toString(),
+                            "Jane Doe");
+            return new Result.Success<>(fakeUser);
+             */
+
+            // send a login POST request
+
+            final String email_HTTP = email;
+            final String username_HTTP = username;
+            final String password_HTTP = password;
+
+            final Response[] responsePayload = new Response[1];
+
+            Thread thread = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    try  {
+                        responsePayload[0] = registerRequest(SERVER_URL,username_HTTP,email_HTTP, password_HTTP);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            thread.start();
+            thread.join();
+
+            System.out.println(responsePayload[0]);
+            // parse response
+            switch (responsePayload[0].code()){
+                case(422):
+
+                case(401):
+
+                case(400):
+                    throw new Exception(responsePayload[0].body().string());
+//                    System.out.println("error?" + responsePayload[0].body().toString());
+
+                default:
+                    System.out.println("success! WOOHOO"+ responsePayload[0].body().toString());
+            }
+
+//            JSONObject responseJSON = new JSONObject().getJSONObject(responsePayload[0].body().toString());
+
+            LoggedInUser loggedInUser =new LoggedInUser(responsePayload[0].body().toString(),email);
+
+            return new Result.Success<>(loggedInUser);
+        } catch (Exception e) {
+            return new Result.Error(new IOException("Error Registerin' in", e));
+        }
+    }
+
 
 
 
@@ -107,6 +168,30 @@ public class LoginDataSource {
 
         String jsonLoginString = new JSONObject()
                 .put("email", email)
+                .put("password", password)
+                .toString();
+        // send payload
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(jsonLoginString, JSON);
+        Request request = new Request.Builder()
+                .url(ServerUrl)
+                .post(body)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            String token = response.body().string();
+            System.out.println("token: "+token);
+            return response;
+        }
+
+
+    }
+
+    private static Response registerRequest(String ServerUrl, String username,String email, String password) throws Exception {
+        final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+
+        String jsonLoginString = new JSONObject()
+                .put("email", email)
+                .put("name", username)
                 .put("password", password)
                 .toString();
         // send payload
