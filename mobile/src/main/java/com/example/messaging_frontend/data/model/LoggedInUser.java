@@ -7,25 +7,23 @@ import java.util.Date;
  */
 public class LoggedInUser {
 
-    private String userId;
-    private String userName;
-//    private int expiration;
+    private String loginToken;
+    private String email;
 
-    public LoggedInUser(String userId, String displayName/*, int expiration*/) {
-        this.userId = userId;
-        this.userName = displayName;
+    public LoggedInUser(String loginToken, String email/*, int expiration*/) {
+        this.loginToken = loginToken;
+        this.email = email;
         /*this.expiration = expiration;*/
     }
 
-    public String getUserId() {
-        return userId;
+    public String getLoginToken() {
+        return loginToken;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getEmail() {
+        return email;
     }
 
-//    public int getExpiration() {
-//        return expiration;
-//    }
+
+
 }

@@ -25,21 +25,22 @@ import android.widget.Toast;
 
 import com.example.messaging_frontend.R;
 
-public class LoginActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        System.out.println("fuck");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
                 .get(LoginViewModel.class);
 
-        final EditText usernameEditText = findViewById(R.id.username);
-        final EditText passwordEditText = findViewById(R.id.password);
-        final Button loginButton = findViewById(R.id.login);
-        final Button openRegistrationButton = findViewById(R.id.open_registration);
+        final EditText usernameEditText = findViewById(R.id.register_username);
+        final EditText passwordEditText = findViewById(R.id.register_password);
+        final EditText passwordConfirmEditText = findViewById(R.id.register_password_confirm);
+        final Button registerButton = findViewById(R.id.register_button);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
@@ -48,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (loginFormState == null) {
                     return;
                 }
-                loginButton.setEnabled(loginFormState.isDataValid());
+                registerButton.setEnabled(loginFormState.isDataValid());
                 if (loginFormState.getUsernameError() != null) {
                     usernameEditText.setError(getString(loginFormState.getUsernameError()));
                 }
@@ -95,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         };
+
         usernameEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -109,42 +111,19 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 loginViewModel.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
             }
         });
 
-        openRegistrationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: Launch a registration activity
-                Toast.makeText(getApplicationContext(), "Start registration fragment.", Toast.LENGTH_LONG).show();
-                // launch registration activity
-//                setContentView(R.layout.activity_registration);
-//                loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
-//                        .get(LoginViewModel.class);
 
-//                final EditText n_usernameEditText = findViewById(R.id.n_username);
-//                final EditText n_usernameEditText = findViewById(R.id.n_username);
-//                final EditText n_passwordEditText = findViewById(R.id.password);
-//                final EditText n_password2EditText = findViewById(R.id.n_password_confirm);
-//                final Button n_loginButton = findViewById(R.id.register);
-//                final ProgressBar n_loadingProgressBar = findViewById(R.id.loading2);
-
-                // Fallunterscheidung:
-                    // 1. Activity returns without doing anything
-                    // 2. Activity returns with login info?
-                // if 1: continute as if nothing happened
-                    // nop
-                // if 2: login with new info
-                    // loginViewModel.login(usernameEditText.getText().toString(),
-                    //         passwordEditText.getText().toString());
-            }
-        });
     }
 
     private void updateUiWithUser(LoggedInUserView model) {

@@ -56,7 +56,7 @@ public class LoginDataSource {
             final String email_HTTP = email;
             final String password_HTTP = password;
 
-            final String[] responsePayload = new String[1];
+            final Response[] responsePayload = new Response[1];
 
             Thread thread = new Thread(new Runnable() {
 
@@ -75,13 +75,22 @@ public class LoginDataSource {
 
 
             // parse response
-            JSONObject responseJSON = new JSONObject().getJSONObject(responsePayload[0]);
+            switch (responsePayload[0].code()){
+                case(422):
 
-            LoggedInUser loggedInUser =
-                    new LoggedInUser(
-                            responseJSON.getString("id"),
-                            responseJSON.getString("username"));
-//                            (int) responseJSON.get("Date"));
+                case(401):
+
+                case(400):
+                    throw new Exception(responsePayload[0].body().string());
+//                    System.out.println("error?" + responsePayload[0].body().toString());
+
+                default:
+                    System.out.println("success! WOOHOO"+ responsePayload[0].body().toString());
+            }
+
+//            JSONObject responseJSON = new JSONObject().getJSONObject(responsePayload[0].body().toString());
+
+            LoggedInUser loggedInUser =new LoggedInUser(responsePayload[0].body().toString(),email);
 
             return new Result.Success<>(loggedInUser);
         } catch (Exception e) {
@@ -93,7 +102,7 @@ public class LoginDataSource {
 
 
 
-    private static String loginRequest(String ServerUrl, String email, String password) throws Exception {
+    private static Response loginRequest(String ServerUrl, String email, String password) throws Exception {
         final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
         String jsonLoginString = new JSONObject()
@@ -109,7 +118,8 @@ public class LoginDataSource {
                 .build();
         try (Response response = client.newCall(request).execute()) {
             String token = response.body().string();
-            return token;
+            System.out.println("token: "+token);
+            return response;
         }
 
 

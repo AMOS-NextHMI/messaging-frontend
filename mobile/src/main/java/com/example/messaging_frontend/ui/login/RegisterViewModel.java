@@ -11,13 +11,13 @@ import com.example.messaging_frontend.data.Result;
 import com.example.messaging_frontend.data.model.LoggedInUser;
 import com.example.messaging_frontend.R;
 
-public class LoginViewModel extends ViewModel {
+public class RegisterViewModel extends ViewModel {
 
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
     private LoginRepository loginRepository;
 
-    LoginViewModel(LoginRepository loginRepository) {
+    RegisterViewModel(LoginRepository loginRepository) {
         this.loginRepository = loginRepository;
     }
 
