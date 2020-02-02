@@ -9,12 +9,12 @@ public class LoggedInUser {
 
     private String userId;
     private String userName;
-    private Date expiration;
+//    private int expiration;
 
-    public LoggedInUser(String userId, String displayName, Date expiration) {
+    public LoggedInUser(String userId, String displayName/*, int expiration*/) {
         this.userId = userId;
         this.userName = displayName;
-        this.expiration = expiration;
+        /*this.expiration = expiration;*/
     }
 
     public String getUserId() {
@@ -25,7 +25,7 @@ public class LoggedInUser {
         return userName;
     }
 
-    public Date getExpiration() {
-        return expiration;
-    }
+//    public int getExpiration() {
+//        return expiration;
+//    }
 }

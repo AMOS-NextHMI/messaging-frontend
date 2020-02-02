@@ -27,12 +27,13 @@ public class LoginDataSource {
 
     private static final int CONNECT_TIMEOUT = 4000;
     private static final int READ_TIMEOUT = 4000;
+    private static final String SERVER_URL = "http://130.149.172.169/login";
 
-    public Result<LoggedInUser> login(String username, String password) {
+    public Result<LoggedInUser> login(String email, String password) {
+
 
         try {
             // TODO: handle loggedInUser authentication
-            Log.i("login", "login: initialized.");
             /* mock up data
             LoggedInUser fakeUser =
                     new LoggedInUser(
@@ -40,44 +41,39 @@ public class LoginDataSource {
                             "Jane Doe");
             return new Result.Success<>(fakeUser);
              */
-            /* Request:
-             * RequestTyp: POST
-             * RequestURL: http://130.149.172.169/login
-             * Response: 200 - Token -> JSON
-             * Error:
-             * - 401 - { "error": "STRING" }
-             * - 422 - Unprocessable Entity
-             *
-             * JSON Payload Post
-             * {
-             *   "name": "STRING",
-             *   "password": "STRING"
-             * }
-             *
-             * JSON Payload Response - A JWT
-             * {
-             *   "id": "STRING",
-             *   "exp": "Date",
-             *   "name": "STRING"
-             * }
-             */
+
             // send a login POST request
-            Log.i("login", "login: sending request.");
 
-            String responsePayload = loginRequest("http://localhost/login", username, password);
+            final String email_HTTP = email;
+            final String password_HTTP = password;
 
-            Log.i("login", "login: response received.  Parsing response.");
+            final String[] responsePayload = new String[1];
+
+            Thread thread = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    try  {
+                        responsePayload[0] = loginRequest(SERVER_URL, email_HTTP, password_HTTP);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            thread.start();
+            thread.join();
+
 
             // parse response
-            JSONObject responseJSON = new JSONObject().getJSONObject(responsePayload);
+            JSONObject responseJSON = new JSONObject().getJSONObject(responsePayload[0]);
 
             LoggedInUser loggedInUser =
                     new LoggedInUser(
                             responseJSON.getString("id"),
-                            responseJSON.getString("name"),
-                            (Date) responseJSON.get("Date"));
+                            responseJSON.getString("username"));
+//                            (int) responseJSON.get("Date"));
 
-            Log.i("login", "A brother made it");
             return new Result.Success<>(loggedInUser);
         } catch (Exception e) {
             return new Result.Error(new IOException("Error logging in", e));
@@ -87,10 +83,9 @@ public class LoginDataSource {
 
 
 
-    private static String loginRequest(String ServerUrl, String userName, String password) throws Exception {
-        Log.i("login", "login: login request: Initializing URL.");
-        URL url = new URL(ServerUrl);  // TODO: This isn't working
-        Log.i("login", "login: login request: initialized URL, now defining connection.");
+    private static String loginRequest(String ServerUrl, String email, String password) throws Exception {
+        URL url = new URL(ServerUrl);
+
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -99,23 +94,17 @@ public class LoginDataSource {
 
 //        connection.setConnectTimeout(CONNECT_TIMEOUT); // Why dis?
 //        connection.setReadTimeout(READ_TIMEOUT); // Why dis?
-        Log.i("login", "login: login request: Creating payload.");
 
         String jsonLoginString = new JSONObject()
-                .put("name", userName)
+                .put("email", email)
                 .put("password", password)
                 .toString();
         // send payload
 
-        Log.i("login", "login: login request: Sending payload.");
-
         try(DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream())) {
-            Log.i("login", "login: login request: Sending payload: putting payload in a byte array.");
             byte[] input = jsonLoginString.getBytes(StandardCharsets.UTF_8);
-            Log.i("login", "login: login request: Sending payload: writing to output stream.");
             outputStream.write(input, 0, input.length);
         }
-        Log.i("login", "login: login request: Awaiting response.");
 
         // receive response
         try(BufferedReader br = new BufferedReader(
