@@ -7,8 +7,13 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.IOException;
+
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
@@ -114,6 +119,25 @@ public class MessageService extends Service {
             Log.i(TAG, "ws == null");
         }
     }
+
+
+
+
+    String post(String subUrl, String json, String authentication) throws IOException {
+        MediaType JSON = MediaType.get("application/json; charset=utf-8");
+
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url("http://130.149.172.169/"+subUrl)
+                .post(body)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            return response.body().string();
+        }
+    }
+
 
 
 

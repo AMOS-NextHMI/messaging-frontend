@@ -10,8 +10,10 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.HttpURLConnection;
 
@@ -20,6 +22,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
@@ -27,7 +35,8 @@ public class LoginDataSource {
 
     private static final int CONNECT_TIMEOUT = 4000;
     private static final int READ_TIMEOUT = 4000;
-    private static final String SERVER_URL = "http://130.149.172.169/login";
+    private static final String SERVER_URL = "http://130.149.172.169/login/";
+//    private static final String SERVER_URL = "http://127.0.0.1/login";
 
     public Result<LoggedInUser> login(String email, String password) {
 
@@ -83,39 +92,27 @@ public class LoginDataSource {
 
 
 
+
     private static String loginRequest(String ServerUrl, String email, String password) throws Exception {
-        URL url = new URL(ServerUrl);
-
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json; utf-8");
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setDoOutput(true);
-
-//        connection.setConnectTimeout(CONNECT_TIMEOUT); // Why dis?
-//        connection.setReadTimeout(READ_TIMEOUT); // Why dis?
+        final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
         String jsonLoginString = new JSONObject()
                 .put("email", email)
                 .put("password", password)
                 .toString();
         // send payload
-
-        try(DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream())) {
-            byte[] input = jsonLoginString.getBytes(StandardCharsets.UTF_8);
-            outputStream.write(input, 0, input.length);
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(jsonLoginString, JSON);
+        Request request = new Request.Builder()
+                .url(ServerUrl)
+                .post(body)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            String token = response.body().string();
+            return token;
         }
 
-        // receive response
-        try(BufferedReader br = new BufferedReader(
-                new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-                    StringBuilder response = new StringBuilder();
-                    String responseLine = null;
-                    while ((responseLine = br.readLine()) != null) {
-                        response.append(responseLine.trim());
-                    }
-                    return response.toString();
-                }
+
     }
 
     public void logout() {
