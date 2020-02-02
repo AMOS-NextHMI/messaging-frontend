@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (mBound) {
-                    mService.startWebSocket("wss://echo.websocket.org");
+                    //
                 }
             }
         });
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (mBound) {
-                    mService.sendRequest(editText.getText().toString());
+                    //
                 }
             }
         });
