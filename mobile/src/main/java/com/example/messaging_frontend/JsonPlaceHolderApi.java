@@ -1,7 +1,9 @@
 package com.example.messaging_frontend;
 
 
+import com.example.messaging_frontend.models.Conversation;
 import com.example.messaging_frontend.models.Message;
+import com.example.messaging_frontend.models.MetaConversation;
 
 import java.util.List;
 
@@ -13,12 +15,15 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface JsonPlaceHolderApi {
-    @GET("posts")
-    Call<List<Message>> getMessages(@Header("Authorization") String authKey);
 
 
-    @GET("conversationId=STRING")
-    Call<String> getConversation(@Header("Authorization") String authKey);
+
+    @GET("/")
+    Call<Conversation> getConversation(@Header("Authorization") String authKey);
+
+
+    @GET("conversations")
+    Call<List<MetaConversation>> getConversationOverview(@Header("Authorization") String authKey,@Header("Content-Type") String contentType);
 
 
     @POST("new_message")

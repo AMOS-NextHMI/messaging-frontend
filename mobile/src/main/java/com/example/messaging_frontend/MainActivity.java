@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //Buttons
         Button button = findViewById(R.id.notificationButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (mBound) {
-                    mService.startWebSocket("wss://echo.websocket.org");
+                   // mService.startWebSocket("wss://echo.websocket.org");
                 }
             }
         });
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (mBound) {
-                    mService.sendRequest(editText.getText().toString());
+                   // mService.sendRequest(editText.getText().toString());
                 }
             }
         });
@@ -95,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
 
+
         if(mBound){
             mService.testMethod();
         }
@@ -112,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             MessageService.LocalBinder binder = (MessageService.LocalBinder) service;
             mService = binder.getService();
+
             mBound = true;
         }
 
@@ -175,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
         Intent myIntent = new Intent(MainActivity.this, ConversationActivity.class);
         myIntent.putExtra("key", value); //Optional parameters - This can be used to pass parameters to the new activity.
         MainActivity.this.startActivity(myIntent);
+
 
 
     }

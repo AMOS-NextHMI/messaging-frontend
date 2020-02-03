@@ -15,9 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.messaging_frontend.models.Contact;
+import com.example.messaging_frontend.models.Message;
 import com.example.messaging_frontend.models.MetaConversation;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -40,6 +42,8 @@ public class ConversationsListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    List<MetaConversation> metaConversations;
     /* end of recycler view crap */
 
 
@@ -48,7 +52,7 @@ public class ConversationsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.i("ConvListActivity","THE CONTEXT IS:"+String.valueOf(getApplicationContext()));
 
-
+        metaConversations=new ArrayList<>();
         Intent intent = getIntent();
         /* value should contain relevant information that we received from main */
         String value = intent.getStringExtra("key");
@@ -146,6 +150,10 @@ public class ConversationsListActivity extends AppCompatActivity {
     /**
 //     * returns a list of all messages in a conversation
      */
+
+    private void setMetaConversations(List<MetaConversation> metaConversations){
+        this.metaConversations = metaConversations;
+    }
     private ArrayList<MetaConversation> get_conversation_list() {
         //TODO
 
@@ -228,9 +236,7 @@ public class ConversationsListActivity extends AppCompatActivity {
 
     public void add_conversation_dummy(){
         Contact myContact = new Contact("Thomas Shelby", 665151);
-        MetaConversation myConvo = MetaConversation.Builder.newInstance()
-                .setMyContact(myContact)
-                .build();
+        MetaConversation myConvo = new MetaConversation("1",new Message("2","Dummy",0));
 
         add_conversation(myConvo);
     }

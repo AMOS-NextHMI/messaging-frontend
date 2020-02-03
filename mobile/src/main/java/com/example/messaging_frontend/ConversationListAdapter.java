@@ -73,7 +73,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         // TODO: introduce the missing compleixity
         MetaConversation metaConversation = this.mDataset.get(position);
       //UNCOMMENT  holder.last_message.setText(metaConversation.getLatestMessage().getBody()); //TODO: prone to bug if latest message doesn't exist.
-        holder.conversation_name.setText(metaConversation.getContact().getName());
+        holder.conversation_name.setText(metaConversation.getConversationId());
     }
 
     // Return the size of your dataset (invoked by the layout manager)

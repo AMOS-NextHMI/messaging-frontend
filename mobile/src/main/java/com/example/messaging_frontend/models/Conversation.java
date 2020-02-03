@@ -3,40 +3,40 @@ package com.example.messaging_frontend.models;
 import java.util.List;
 
 public class Conversation {
-    private String conversationID;
-    private String conversationName;
-    private List<Contact> members;
+    private String conversationId;
+    private String name;
+    private List<Contact> member;
     private List<Message> messages;
 
-    public Conversation(String conversationID, String conversationName, List<Contact> members, List<Message> messages) {
-        this.conversationID = conversationID;
-        this.conversationName = conversationName;
-        this.members = members;
+    public Conversation(String conversationId, String name, List<Contact> member, List<Message> messages) {
+        this.conversationId = conversationId;
+        this.name = name;
+        this.member = member;
         this.messages = messages;
     }
 
-    public String getConversationID() {
-        return conversationID;
+    public String getConversationId() {
+        return conversationId;
     }
 
-    public void setConversationID(String conversationID) {
-        this.conversationID = conversationID;
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
     }
 
-    public String getConversationName() {
-        return conversationName;
+    public String getName() {
+        return name;
     }
 
-    public void setConversationName(String conversationName) {
-        this.conversationName = conversationName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public List<Contact> getMembers() {
-        return members;
+    public List<Contact> getMember() {
+        return member;
     }
 
-    public void setMembers(List<Contact> members) {
-        this.members = members;
+    public void setMember(List<Contact> member) {
+        this.member = member;
     }
 
     public List<Message> getMessages() {

@@ -5,66 +5,29 @@ package com.example.messaging_frontend.models;
  * TODO: includes a contact instant and other relevant data, such as the latest message
  */
 public class MetaConversation {
-    private Contact myContact;
-    private Message latestMessage;
+    private String conversationId;
+    private Message lastMessage;
 
 
-    public MetaConversation(Builder builder)
-    {
-        this.myContact = builder.myContact;
-        this.latestMessage = builder.latestMessage;
+    public MetaConversation(String conversationId, Message lastMessage) {
+        this.conversationId = conversationId;
+        this.lastMessage = lastMessage;
     }
 
-    // builder
-    public static class Builder {
-        private Contact myContact;
-        private Message latestMessage;
-
-        public static Builder newInstance() {
-            return new Builder();
-        }
-
-        private Builder() {
-        }
-
-        // setters
-        public Builder setMyContact(Contact myContact) {
-            this.myContact = myContact;
-            return this;
-        }
-
-        public Builder setLatestMessage(Message latestMessage) {
-            this.latestMessage = latestMessage;
-            return this;
-        }
-
-        public MetaConversation build()
-        {
-            return new MetaConversation(this);
-        }
-
-
+    public String getConversationId() {
+        return conversationId;
     }
 
-
-
-
-
-    // getters
-    public Contact getContact() {
-        return myContact;
+    public Message getLastMessage() {
+        return lastMessage;
     }
 
-    public Message getLatestMessage() {
-        return latestMessage;
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
     }
 
-
-    @Override
-    public String toString()
-    {
-        return "Contact = " + this.myContact + ", latest Message = " + this.latestMessage + ".";
+    public void setLastMessage(Message lastMessage) {
+        this.lastMessage = lastMessage;
     }
-
-
 }
+

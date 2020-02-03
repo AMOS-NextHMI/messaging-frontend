@@ -6,11 +6,15 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -20,6 +24,7 @@ import android.widget.EditText;
 
 import com.example.messaging_frontend.auth.AuthenticationInterceptor;
 import com.example.messaging_frontend.models.Contact;
+import com.example.messaging_frontend.models.Conversation;
 import com.example.messaging_frontend.models.Message;
 
 import java.util.ArrayList;
@@ -64,28 +69,26 @@ public class ConversationActivity extends AppCompatActivity {
      * TODO: This activity uses the meta-conversation to then request the messages history and display it.
      */
     private RecyclerView mMessageRecycler;
-    private static String API_BASE_URL = "https://130.149.172.169/";
+
     private ConversationAdapter mMessageAdapter;
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-    private static Retrofit.Builder builder =
-            new Retrofit.Builder()
-                    .baseUrl(API_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create());
 
-    private  static  Retrofit retrofit;
 
     Button sendButton;
     EditText messageSent;
 
-    List<Message> messageList;
+    Conversation mConversation;
     Contact mSender;
     Contact mReceiver;
     Date mDate;
     String authKey;
-
+    Boolean mbound;
     JsonPlaceHolderApi jsonPlaceHolderApi;
     BroadcastReceiver br;
-
+    Intent myIntent ;
+    MessageService messageService;
+    Activity myActivity;
+    Boolean test;
 
 
 
@@ -93,33 +96,26 @@ public class ConversationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
-        messageList=new ArrayList<>();
-        authKey="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMzcwMTJhY2Q1ZTRiMDAyYTQyMDE1NSIsInVzZXJuYW1lIjoiYWxsZW4iLCJpYXQiOjE1ODA2NjMwODJ9.sBYcYnntsH_AGN-ULvXkqJAsmcLS-vVbvSzuSiv_qDU";
+        List<Contact> contacts = new ArrayList<>();
+        List<Message> messages = new ArrayList<>();
+        contacts.add(new Contact("Harry",1));
 
-        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        mConversation = new Conversation("0","",contacts,messages);
+
+        bindService(new Intent(this, MessageService.class), connection, 0);
+        myIntent = this.getIntent();
+        myActivity= this;
+
+
+
+
+
 
         br = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-               // Retrofit retrofit= createService(ConversationActivity.class);
 
 
-                Call<String> call = jsonPlaceHolderApi.getConversation(authKey);
-
-                call.enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        if(!response.isSuccessful()){
-
-                            return;
-                        }
-                        Log.i("Server","works");
-                    }
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        Log.i("ConversationActivityMESSAGE",t.getMessage());
-                    }
-                });
 
 
 
@@ -127,14 +123,15 @@ public class ConversationActivity extends AppCompatActivity {
         };
 
 
-        registerReceiver(br, new IntentFilter("SERVER_NOTIFICATION"));
+
+
 
 
         mSender = new Contact("Feriel",2);
         mReceiver = new Contact("Mahmoud",3);
         mDate = new Date();
         mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
-        mMessageAdapter = new ConversationAdapter(this, messageList);
+        mMessageAdapter = new ConversationAdapter(this, mConversation.getMessages());
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
         mMessageRecycler.setAdapter(mMessageAdapter);
         sendButton= (Button) findViewById(R.id.button_send);
@@ -142,7 +139,8 @@ public class ConversationActivity extends AppCompatActivity {
         sendButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                send_message();
+                //send_message();
+                Log.i("ConversationActivity",mConversation.getMessages().toString());
 
             }
         });
@@ -155,6 +153,27 @@ public class ConversationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
     }
+
+    // Defines callbacks for service binding, passed to bindService()
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            MessageService.LocalBinder binder = (MessageService.LocalBinder) service;
+            MessageService mService = binder.getService();
+            messageService = mService;
+            mService.addBoundIntent(myIntent);
+            mService.addBoundActivity(myActivity);
+            mbound =true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mbound = false;
+        }
+    };
+
 
 
 
@@ -171,8 +190,15 @@ public class ConversationActivity extends AppCompatActivity {
     protected void onDestroy() {
         // Unregister since the activity is about to be closed.
         LocalBroadcastManager.getInstance(this).unregisterReceiver(br);
+        messageService.removeBoundIntent(myIntent);
+        messageService.removeBoundActivity(myActivity);
+
+        unbindService(connection);
+
         super.onDestroy();
     }
+
+
 
 
     /**
@@ -190,10 +216,10 @@ public class ConversationActivity extends AppCompatActivity {
     private void send_message(){
 
         messageSent = (EditText) findViewById(R.id.text_chatbox);
-        Message message = new Message(mSender, messageSent.getText().toString(), mDate.getTime());
+        Message message = new Message("me", messageSent.getText().toString(), mDate.getTime());
         messageSent.getText().clear();
-        messageList.add(message);
-        mMessageAdapter.notifyItemInserted(messageList.indexOf(message));
+        mConversation.getMessages().add(message);
+        mMessageAdapter.notifyItemInserted(mConversation.getMessages().indexOf(message));
         Call<Message> call = jsonPlaceHolderApi.sendMessage(authKey,"Test","Test",11);
 
 

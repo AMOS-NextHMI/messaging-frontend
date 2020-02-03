@@ -46,7 +46,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
 
 
         //if (message.getUserId().equals(loggedUser.getUserId()) ){
-        if (message.getSender().getId() == 2 ){
+        if (message.getSenderUserId() == "2" ){
 
             // If the current user is the sender of the message
 
@@ -108,10 +108,11 @@ public class ConversationAdapter extends RecyclerView.Adapter {
         }
 
         void bind(Message message) {
-           messageText.setText(message.getBody());
+           messageText.setText(message.getMessageText());
             // Format the stored timestamp into a readable String using method.
             // timeText.setText((int) message.getCreatedAt());
         }
+
     }
 
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
@@ -128,12 +129,12 @@ public class ConversationAdapter extends RecyclerView.Adapter {
         }
 
         void bind(Message message) {
-            messageText.setText(message.getBody());
+            messageText.setText(message.getMessageText());
 
             // Format the stored timestamp into a readable String using method.
            // timeText.setText("11:00");
 
-            nameText.setText(message.getSender().getName());
+            nameText.setText(message.getSenderUserId());
 
             // Insert the profile image from the URL into the ImageView.
             //Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage);
