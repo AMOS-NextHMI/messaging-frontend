@@ -2,6 +2,7 @@ package com.example.messaging_frontend.ui.login;
 
 import android.app.Activity;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -45,6 +47,17 @@ public class RegisterActivity extends AppCompatActivity {
         final EditText passwordConfirmEditText = findViewById(R.id.register_password_confirm);
         final Button registerButton = findViewById(R.id.register_button);
         final ProgressBar loadingProgressBar = findViewById(R.id.register_loading);
+
+
+        // toolbar home option
+        Toolbar toolbar = (Toolbar) findViewById(R.id.registration_toolbar);
+        toolbar.setTitle("Registration");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+
 
         loginViewModel.getRegisterFormState().observe(this, new Observer<RegisterFormState>() {
             @Override
@@ -131,9 +144,25 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     * This method simply creates the home option on the toolbar
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
+        // TODO : initiate successful registration experience
 
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
