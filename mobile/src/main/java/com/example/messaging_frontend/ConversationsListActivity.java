@@ -4,17 +4,24 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.messaging_frontend.models.Contact;
+import com.example.messaging_frontend.models.Message;
+import com.example.messaging_frontend.models.MetaConversation;
+
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -37,14 +44,17 @@ public class ConversationsListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    List<MetaConversation> metaConversations;
     /* end of recycler view crap */
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("ConvListActivity","THE CONTEXT IS:"+String.valueOf(getApplicationContext()));
 
-
+        metaConversations=new ArrayList<>();
         Intent intent = getIntent();
         /* value should contain relevant information that we received from main */
         String token = intent.getStringExtra("token");
@@ -144,12 +154,18 @@ public class ConversationsListActivity extends AppCompatActivity {
     /**
      * returns a list of all messages in a conversation
      */
+    private void setMetaConversations(List<MetaConversation> metaConversations){
+        this.metaConversations = metaConversations;
+    }
+
     private ArrayList<ConversationOverview> get_conversation_list(String token) {
         //TODO: send post request using token to get a list of all conversations.
 
 //        return new ArrayList<ConversationOverview>();
 
-        return get_dummy_conversation_list();
+
+     //UNCOMMENT   return get_dummy_conversation_list();
+        return null;
     }
 
     /**
@@ -233,19 +249,14 @@ public class ConversationsListActivity extends AppCompatActivity {
     }
 
     public void add_conversation_dummy(){
-        Contact myContact = new Contact("Thomas Shelby", "665151");
-        ConvMessage convMessage = ConvMessage.Builder.newInstance()
-                .setBody("Hey, ho, let's go.")
-                .setTime_stamp(new Date())
-                .setConvID("Conv ID example")
-                .setSender(myContact)
-                .build();
+        Contact myContact = new Contact("Thomas Shelby", 665151);
 
         ConversationOverview myConvo = ConversationOverview.Builder.newInstance()
                 .setConvID("Conv ID example")
                 .setLatestMessage(convMessage)
 //                .setMyContact(myContact)
                 .build();
+
 
         add_conversation(myConvo);
     }

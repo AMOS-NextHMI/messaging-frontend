@@ -1,11 +1,18 @@
-package com.example.messaging_frontend;
+package com.example.messaging_frontend.models;
 
 public class Contact {
     private String name;
     private String id;
     private java.net.URL profilUrl = null;
 
-    public String getId() {
+
+
+    public Contact(String name, int id){
+        this.name = name;
+        this.id = id;
+    }
+
+    public int getId() {
         return id;
     }
 
@@ -13,8 +20,11 @@ public class Contact {
         return name;
     }
 
-    public Contact(String name, String id){
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public void setId(int id) {
         this.id = id;
     }
 
