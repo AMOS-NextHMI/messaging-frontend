@@ -70,25 +70,20 @@ public class ConversationActivity extends AppCompatActivity {
      */
     private RecyclerView mMessageRecycler;
 
-    private ConversationAdapter mMessageAdapter;
+    ConversationAdapter mMessageAdapter;
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
 
     Button sendButton;
-    EditText messageSent;
+
 
     Conversation mConversation;
     Contact mSender;
-    Contact mReceiver;
-    Date mDate;
-    String authKey;
-    Boolean mbound;
     JsonPlaceHolderApi jsonPlaceHolderApi;
-    BroadcastReceiver br;
-    Intent myIntent ;
     MessageService messageService;
     Activity myActivity;
-    Boolean test;
+     String token;
+
 
 
 
@@ -96,40 +91,19 @@ public class ConversationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
-        List<Contact> contacts = new ArrayList<>();
-        List<Message> messages = new ArrayList<>();
-        contacts.add(new Contact("Harry","1"));
 
-        mConversation = new Conversation("0","",contacts,messages);
+        token = this.getIntent().getStringExtra("token");
 
-        bindService(new Intent(this, MessageService.class), connection, 0);
-        myIntent = this.getIntent();
         myActivity= this;
+        bindService(new Intent(this, MessageService.class), connection, 0);
+        String conversationId = this.getIntent().getStringExtra("conversationId");
+
+        mConversation = messageService.getConversation(token,conversationId);
 
 
 
 
 
-
-        br = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-
-
-
-
-            }
-        };
-
-
-
-
-
-
-        mSender = new Contact("Feriel","2");
-        mReceiver = new Contact("Mahmoud","3");
-        mDate = new Date();
         mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
         mMessageAdapter = new ConversationAdapter(this, mConversation.getMessages());
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -139,7 +113,7 @@ public class ConversationActivity extends AppCompatActivity {
         sendButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                send_message();
+                sendMessage();
                 Log.i("ConversationActivity",mConversation.getMessages().toString());
 
             }
@@ -147,7 +121,7 @@ public class ConversationActivity extends AppCompatActivity {
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.conversation_toolbar);
-        toolbar.setTitle(mReceiver.getName());
+        toolbar.setTitle(mConversation.getMember().toString());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -163,19 +137,15 @@ public class ConversationActivity extends AppCompatActivity {
             MessageService.LocalBinder binder = (MessageService.LocalBinder) service;
             MessageService mService = binder.getService();
             messageService = mService;
-            mService.addBoundIntent(myIntent);
             mService.addBoundActivity(myActivity);
-            mbound =true;
+
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            mbound = false;
+
         }
     };
-
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -189,16 +159,10 @@ public class ConversationActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         // Unregister since the activity is about to be closed.
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(br);
-        messageService.removeBoundIntent(myIntent);
         messageService.removeBoundActivity(myActivity);
-
         unbindService(connection);
-
         super.onDestroy();
     }
-
-
 
 
     /**
@@ -213,24 +177,15 @@ public class ConversationActivity extends AppCompatActivity {
      * handles the UI aspect of sending a message and sends out a send_message query.
      * params can be added if/when needed
      */
-    private void send_message(){
-
-        messageSent = (EditText) findViewById(R.id.text_chatbox);
-        Message message = new Message("me", messageSent.getText().toString(), mDate.getTime());
+    private void sendMessage(){
+        Date date = new Date();
+        EditText messageSent = (EditText) findViewById(R.id.text_chatbox);
         messageSent.getText().clear();
+        Message message = new Message(mSender.getId(), messageSent.getText().toString(), date.getTime());
+
         mConversation.getMessages().add(message);
         mMessageAdapter.notifyItemInserted(mConversation.getMessages().indexOf(message));
-        Call<Message> call = jsonPlaceHolderApi.sendMessage(authKey,"Test","Test",11);
-
-
+        messageService.sendMessage(mConversation.getConversationId(),message.getMessageText());
 
     }
-
-
-
-
-
-
-
-
 }

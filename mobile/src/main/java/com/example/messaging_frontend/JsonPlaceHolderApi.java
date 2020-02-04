@@ -26,11 +26,9 @@ public interface JsonPlaceHolderApi {
     Call<List<MetaConversation>> getConversationOverview(@Header("Authorization") String authKey,@Header("Content-Type") String contentType);
 
 
-    @POST("new_message")
+    @POST("messages")
     @FormUrlEncoded
-    Call<Message> sendMessage(@Header("Authorization") String authKey, @Field("title") String title,
-                        @Field("body") String body,
-                        @Field("userId") long userId);
+    Call<Message> sendMessage(@Header("Authorization") String authKey,String messageText);
 
 
 }

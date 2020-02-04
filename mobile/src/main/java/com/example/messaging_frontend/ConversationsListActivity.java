@@ -2,8 +2,12 @@ package com.example.messaging_frontend;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,10 +46,13 @@ public class ConversationsListActivity extends AppCompatActivity {
 
     /* start of recycler view crap */
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
+    RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
+    MessageService messageService;
+    Activity myActivity ;
     List<MetaConversation> metaConversations;
+    String token;
     /* end of recycler view crap */
 
 
@@ -53,11 +60,11 @@ public class ConversationsListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i("ConvListActivity","THE CONTEXT IS:"+String.valueOf(getApplicationContext()));
-
+        myActivity = this;
         metaConversations=new ArrayList<>();
         Intent intent = getIntent();
         /* value should contain relevant information that we received from main */
-        String token = intent.getStringExtra("token");
+        token = intent.getStringExtra("token");
         String displayName = intent.getStringExtra("display name");
         Toast.makeText(this, "started conv. list act. w/ token: " + token.toString(), Toast.LENGTH_LONG).show();
 
@@ -69,10 +76,7 @@ public class ConversationsListActivity extends AppCompatActivity {
 //        getSupportActionBar().setTitle("Chats");
         getSupportActionBar().setTitle(displayName);
 
-        // Initialize conversationList
-        // query all meta-conversations
 
-        ArrayList<MetaConversation> myConversations = get_conversation_list(token);
 //        mAdapter.notifyDataSetChanged();
         // TODO: create a conversation for each element in the list
         /* start of recycler view crap */
@@ -87,7 +91,7 @@ public class ConversationsListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new ConversationListAdapter(myConversations);
+        mAdapter = new ConversationListAdapter(metaConversations);
 
         // create seperators between items
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
@@ -99,6 +103,37 @@ public class ConversationsListActivity extends AppCompatActivity {
         /* end of recycler view crap */
 
 
+    }
+
+
+
+
+    // Defines callbacks for service binding, passed to bindService()
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            MessageService.LocalBinder binder = (MessageService.LocalBinder) service;
+            MessageService mService = binder.getService();
+            messageService = mService;
+            messageService.token = token;
+
+            mService.addBoundActivity(myActivity);
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+
+        }
+    };
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        messageService.removeBoundActivity(myActivity);
+        unbindService(connection);
+        super.onDestroy();
     }
 
     @Override
@@ -145,28 +180,12 @@ public class ConversationsListActivity extends AppCompatActivity {
     private void launchConversationActivity(MetaConversation myMetaConversation) {
         // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
         Intent myIntent = new Intent(ConversationsListActivity.this, ConversationActivity.class);
-        myIntent.putExtra("conv_id", myMetaConversation.getConversationId());
+        myIntent.putExtra("conversationId", myMetaConversation.getConversationId());
+        myIntent.putExtra("token",token);
         ConversationsListActivity.this.startActivity(myIntent);
     }
 
 
-
-    /**
-     * returns a list of all messages in a conversation
-     */
-    private void setMetaConversations(List<MetaConversation> metaConversations){
-        this.metaConversations = metaConversations;
-    }
-
-    private ArrayList<MetaConversation> get_conversation_list(String token) {
-        //TODO: send post request using token to get a list of all conversations.
-
-//        return new ArrayList<MetaConversation>();
-
-
-     //UNCOMMENT   return get_dummy_conversation_list();
-        return null;
-    }
 
     /**
      * returns a list of all messages in a conversation
