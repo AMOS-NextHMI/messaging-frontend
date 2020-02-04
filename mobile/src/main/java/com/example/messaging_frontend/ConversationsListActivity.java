@@ -72,7 +72,7 @@ public class ConversationsListActivity extends AppCompatActivity {
         // Initialize conversationList
         // query all meta-conversations
 
-        ArrayList<ConversationOverview> myConversations = get_conversation_list(token);
+        ArrayList<MetaConversation> myConversations = get_conversation_list(token);
 //        mAdapter.notifyDataSetChanged();
         // TODO: create a conversation for each element in the list
         /* start of recycler view crap */
@@ -140,12 +140,12 @@ public class ConversationsListActivity extends AppCompatActivity {
 
     /**
      * creates a ConversationActivity for a specified metaConversation
-     * @param myConversationOverview
+     * @param myMetaConversation
      */
-    private void launchConversationActivity(ConversationOverview myConversationOverview) {
+    private void launchConversationActivity(MetaConversation myMetaConversation) {
         // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
         Intent myIntent = new Intent(ConversationsListActivity.this, ConversationActivity.class);
-        myIntent.putExtra("conv_id", myConversationOverview.getConvID());
+        myIntent.putExtra("conv_id", myMetaConversation.getConversationId());
         ConversationsListActivity.this.startActivity(myIntent);
     }
 
@@ -158,10 +158,10 @@ public class ConversationsListActivity extends AppCompatActivity {
         this.metaConversations = metaConversations;
     }
 
-    private ArrayList<ConversationOverview> get_conversation_list(String token) {
+    private ArrayList<MetaConversation> get_conversation_list(String token) {
         //TODO: send post request using token to get a list of all conversations.
 
-//        return new ArrayList<ConversationOverview>();
+//        return new ArrayList<MetaConversation>();
 
 
      //UNCOMMENT   return get_dummy_conversation_list();
@@ -171,58 +171,43 @@ public class ConversationsListActivity extends AppCompatActivity {
     /**
      * returns a list of all messages in a conversation
      */
-    private ArrayList<ConversationOverview> get_dummy_conversation_list() {
-        ArrayList<ConversationOverview> myConvList = new ArrayList<>();
+    private ArrayList<MetaConversation> get_dummy_conversation_list() {
+        ArrayList<MetaConversation> myConvList = new ArrayList<>();
 
-        ConversationOverview myConv = new_conv("Thomas Shelby", "1", "By order of the peaky blinders", new Date());
+        MetaConversation myConv = new_conv("Thomas Shelby", "1", "By order of the peaky blinders", 0);
         myConvList.add(myConv);
 
-        myConv = new_conv("Arthur Shelby", "U665354", "Linda!", new Date());
-        myConvList.add(myConv);
-
-
-        myConv = new_conv("John Shelby", "665355", "", new Date());
+        myConv = new_conv("Arthur Shelby", "U665354", "Linda!", 0);
         myConvList.add(myConv);
 
 
-        myConv = new_conv("Muh boy2", "665357", "I didn't do it.", new Date());
+        myConv = new_conv("John Shelby", "665355", "", 0);
         myConvList.add(myConv);
 
-        myConv = new_conv("Muh boy3", "665358", "I didn't do it.", new Date());
+
+        myConv = new_conv("Muh boy2", "665357", "I didn't do it.", 0);
         myConvList.add(myConv);
 
-        myConv = new_conv("Muh boy4", "665359", "I didn't do it.", new Date());
+        myConv = new_conv("Muh boy3", "665358", "I didn't do it.", 0);
         myConvList.add(myConv);
 
-        myConv = new_conv("Muh boy5", "665360", "I didn't do it.", new Date());
+        myConv = new_conv("Muh boy4", "665359", "I didn't do it.", 0);
         myConvList.add(myConv);
 
-        myConv = new_conv("Muh boy6", "665361", "I didn't do it.", new Date());
+        myConv = new_conv("Muh boy5", "665360", "I didn't do it.", 0);
+        myConvList.add(myConv);
+
+        myConv = new_conv("Muh boy6", "665361", "I didn't do it.", 0);
         myConvList.add(myConv);
 
         return myConvList;
     }
 
 
-    public ConversationOverview new_conv(String name, String id, String body, Date timeStamp){
-        Contact myContact = new Contact(name, id);
-//        Message myMessage = new Message.Builder()
-//                .setBody(body)
-//                .setConvID(id)
-//                .setTime_stamp(timeStamp)
-//                .build();
-        ConvMessage myMessage = ConvMessage.Builder.newInstance()
-                .setBody(body)
-                .setConvID(id)
-                .setTime_stamp(timeStamp)
-                .setSender(myContact)
-                .build();
+    public MetaConversation new_conv(String name, String id, String body, int timeStamp){
 
-        ConversationOverview myConv = ConversationOverview.Builder.newInstance()
-//                .setMyContact(myContact)
-                .setLatestMessage(myMessage)
-                .setConvID(id)
-                .build();
+        Message myMessage = new Message(id, body, timeStamp);
+        MetaConversation myConv = new MetaConversation(id, myMessage);
 
         return myConv;
     }
@@ -231,7 +216,7 @@ public class ConversationsListActivity extends AppCompatActivity {
     /**
      * adds a conversation conversation --  UNNECESSARY DUE TO ADAPTER
      */
-    private void add_conversation(ConversationOverview myConversation){
+    private void add_conversation(MetaConversation myConversation){
         //TODO
         // create and instantiate an item
 //        ConstraintLayout myLayout = new ConstraintLayout(R.id.conversationListItem);
@@ -249,14 +234,9 @@ public class ConversationsListActivity extends AppCompatActivity {
     }
 
     public void add_conversation_dummy(){
-        Contact myContact = new Contact("Thomas Shelby", 665151);
+        Contact myContact = new Contact("Thomas Shelby", "665151");
 
-        ConversationOverview myConvo = ConversationOverview.Builder.newInstance()
-                .setConvID("Conv ID example")
-                .setLatestMessage(convMessage)
-//                .setMyContact(myContact)
-                .build();
-
+        MetaConversation myConvo = new MetaConversation("Conv ID example",new Message("senderUserId","convMessage",0));
 
         add_conversation(myConvo);
     }

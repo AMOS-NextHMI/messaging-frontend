@@ -98,7 +98,7 @@ public class ConversationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_conversation);
         List<Contact> contacts = new ArrayList<>();
         List<Message> messages = new ArrayList<>();
-        contacts.add(new Contact("Harry",1));
+        contacts.add(new Contact("Harry","1"));
 
         mConversation = new Conversation("0","",contacts,messages);
 
@@ -127,8 +127,8 @@ public class ConversationActivity extends AppCompatActivity {
 
 
 
-        mSender = new Contact("Feriel",2);
-        mReceiver = new Contact("Mahmoud",3);
+        mSender = new Contact("Feriel","2");
+        mReceiver = new Contact("Mahmoud","3");
         mDate = new Date();
         mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
         mMessageAdapter = new ConversationAdapter(this, mConversation.getMessages());
@@ -139,7 +139,7 @@ public class ConversationActivity extends AppCompatActivity {
         sendButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //send_message();
+                send_message();
                 Log.i("ConversationActivity",mConversation.getMessages().toString());
 
             }

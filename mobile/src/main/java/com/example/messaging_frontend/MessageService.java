@@ -11,11 +11,16 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.messaging_frontend.models.Conversation;
+import com.example.messaging_frontend.models.MetaConversation;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.WebSocket;
+
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 import retrofit2.Call;
@@ -33,8 +38,7 @@ public class MessageService extends Service {
     private static final String TAG = "MessageService";
     private final IBinder binder = new LocalBinder();
 
-    private OkHttpClient client;
-    private WebSocket ws;
+
     private static String API_BASE_URL = "https://130.149.172.169/";
     private List<MetaConversation> metaConversations;
     public Handler handler = null;

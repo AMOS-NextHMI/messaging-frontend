@@ -7,12 +7,12 @@ public class Contact {
 
 
 
-    public Contact(String name, int id){
+    public Contact(String name, String id){
         this.name = name;
         this.id = id;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -24,7 +24,7 @@ public class Contact {
         this.name = name;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
