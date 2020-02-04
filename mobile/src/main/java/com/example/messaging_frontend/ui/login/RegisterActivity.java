@@ -24,6 +24,9 @@ import android.widget.Toast;
 
 
 import com.example.messaging_frontend.R;
+import com.example.messaging_frontend.data.LoginDataSource;
+
+import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -31,7 +34,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        System.out.println("fuck");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
@@ -43,22 +45,6 @@ public class RegisterActivity extends AppCompatActivity {
         final EditText passwordConfirmEditText = findViewById(R.id.register_password_confirm);
         final Button registerButton = findViewById(R.id.register_button);
         final ProgressBar loadingProgressBar = findViewById(R.id.register_loading);
-
-//        usernameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//
-//      @Override
-//        public void onFocusChange(View v, boolean hasFocus) {
-//
-//          // When focus is lost check that the text field has valid values.
-//
-//          if (!hasFocus) {
-//              {
-//                  if
-//              }
-//          }
-//      }
-//    });
-
 
         loginViewModel.getRegisterFormState().observe(this, new Observer<RegisterFormState>() {
             @Override
@@ -100,8 +86,6 @@ public class RegisterActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override

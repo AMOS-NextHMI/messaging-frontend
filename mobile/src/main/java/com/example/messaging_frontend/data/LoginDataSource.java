@@ -138,11 +138,10 @@ public class LoginDataSource {
             // parse response
             switch (responsePayload[0].code()){
                 case(422):
-
                 case(401):
-
                 case(400):
                     throw new Exception(responsePayload[0].body().string());
+
 //                    System.out.println("error?" + responsePayload[0].body().toString());
 
                 default:

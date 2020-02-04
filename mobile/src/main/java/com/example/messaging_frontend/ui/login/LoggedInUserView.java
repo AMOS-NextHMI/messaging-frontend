@@ -8,12 +8,19 @@ import java.net.URI;
  * Class exposing authenticated user details to the UI.
  */
 class LoggedInUserView {
+
+    private String token;
     private String displayName;
     private URI profilePicture; //optional
     //... other data fields that may be accessible to the UI
 
-    LoggedInUserView(String displayName) {
+    LoggedInUserView(String displayName, String token) {
         this.displayName = displayName;
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
     }
 
     String getDisplayName() {

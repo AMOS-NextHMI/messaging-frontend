@@ -5,6 +5,7 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -23,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.messaging_frontend.AppActivity;
+import com.example.messaging_frontend.MainActivity;
 import com.example.messaging_frontend.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -59,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
+
             @Override
             public void onChanged(@Nullable LoginResult loginResult) {
                 if (loginResult == null) {
@@ -67,11 +71,12 @@ public class LoginActivity extends AppCompatActivity {
                 loadingProgressBar.setVisibility(View.GONE);
                 if (loginResult.getError() != null) {
                     showLoginFailed(loginResult.getError());
+//                    setResult(Activity.RESULT_CANCELED);
                 }
                 if (loginResult.getSuccess() != null) {
                     updateUiWithUser(loginResult.getSuccess());
+//                    setResult(Activity.RESULT_OK);
                 }
-                setResult(Activity.RESULT_OK);
 
                 //Complete and destroy login activity once successful
                 finish();
@@ -124,16 +129,6 @@ public class LoginActivity extends AppCompatActivity {
                 // TODO: Launch a registration activity
                 Toast.makeText(getApplicationContext(), "Start registration fragment.", Toast.LENGTH_LONG).show();
                 // launch registration activity
-//                setContentView(R.layout.activity_registration);
-//                loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
-//                        .get(LoginViewModel.class);
-
-//                final EditText n_usernameEditText = findViewById(R.id.n_username);
-//                final EditText n_usernameEditText = findViewById(R.id.n_username);
-//                final EditText n_passwordEditText = findViewById(R.id.password);
-//                final EditText n_password2EditText = findViewById(R.id.n_password_confirm);
-//                final Button n_loginButton = findViewById(R.id.register);
-//                final ProgressBar n_loadingProgressBar = findViewById(R.id.loading2);
 
                 // Fallunterscheidung:
                     // 1. Activity returns without doing anything
@@ -150,11 +145,19 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         // TODO : initiate successful logged in experience
+        Intent loginIntent = new Intent();
+        loginIntent.putExtra("token", model.getToken());
+        loginIntent.putExtra("display name", model.getDisplayName());
+        loginIntent.putExtra("login_success", true);
+        setResult(AppActivity.RESULT_OK, loginIntent);
+//        setResult(Activity.RESULT_OK);
 
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        finish();
+//        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
+//        setResult(Activity.RESULT_CANCELED);
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 }

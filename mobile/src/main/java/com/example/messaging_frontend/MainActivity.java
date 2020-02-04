@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         final EditText editText = findViewById(R.id.editText);
+
         Button openSocketButton = findViewById(R.id.openSocketButton);
         openSocketButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         Button sendButton = findViewById(R.id.sendButton);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,12 +63,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         Button conversationListButton = findViewById(R.id.conversationListButton);
         conversationListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mBound) {
-                    launchConversationListActivity("Baby Yoda's 50.");
+                    launchConversationListActivity("Baby Yoda's 50.", "Martha Stewart");
                 }
             }
         });
@@ -100,6 +103,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button appButton = findViewById(R.id.App_Button);
+        appButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mBound) {
+                    launchAppActivity("1");
+                }
+            }
+        });
 
         createNotificationChannel();
 
@@ -177,10 +189,11 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Launches a conversation list and passes it a TBD value
      */
-    private void launchConversationListActivity(String value) {
+    private void launchConversationListActivity(String token, String userName) {
         // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
         Intent myIntent = new Intent(MainActivity.this, ConversationsListActivity.class);
-        myIntent.putExtra("key", value); //Optional parameters - This can be used to pass parameters to the new activity.
+        myIntent.putExtra("token", token);
+        myIntent.putExtra("display name", userName);
         MainActivity.this.startActivity(myIntent);
     }
 
@@ -202,6 +215,12 @@ public class MainActivity extends AppCompatActivity {
         // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
         Intent myIntent = new Intent(MainActivity.this, RegisterActivity.class);
         myIntent.putExtra("conv_id", value); //Optional parameters - This can be used to pass parameters to the new activity.
+        MainActivity.this.startActivity(myIntent);
+    }
+
+    void launchAppActivity(String value) {
+        // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
+        Intent myIntent = new Intent(MainActivity.this, AppActivity.class);
         MainActivity.this.startActivity(myIntent);
     }
 

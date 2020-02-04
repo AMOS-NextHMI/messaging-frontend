@@ -47,20 +47,22 @@ public class ConversationsListActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         /* value should contain relevant information that we received from main */
-        String value = intent.getStringExtra("key");
-        Toast.makeText(this, "started conv. list act. w/ value: " + value.toString(), Toast.LENGTH_LONG).show();
+        String token = intent.getStringExtra("token");
+        String displayName = intent.getStringExtra("display name");
+        Toast.makeText(this, "started conv. list act. w/ token: " + token.toString(), Toast.LENGTH_LONG).show();
 
         // Set up layout
         setContentView(R.layout.activity_conversations_list);
         // TODO: connect those two somehow: R.id.toolbar and R.menu.conversation_list_bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.conversation_list_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Chats");
+//        getSupportActionBar().setTitle("Chats");
+        getSupportActionBar().setTitle(displayName);
 
-        // TODO: Initialize conversationList
+        // Initialize conversationList
         // query all meta-conversations
 
-        ArrayList<ConversationOverview> myConversations = get_conversation_list();
+        ArrayList<ConversationOverview> myConversations = get_conversation_list(token);
 //        mAdapter.notifyDataSetChanged();
         // TODO: create a conversation for each element in the list
         /* start of recycler view crap */
@@ -140,10 +142,10 @@ public class ConversationsListActivity extends AppCompatActivity {
 
 
     /**
-//     * returns a list of all messages in a conversation
+     * returns a list of all messages in a conversation
      */
-    private ArrayList<ConversationOverview> get_conversation_list() {
-        //TODO
+    private ArrayList<ConversationOverview> get_conversation_list(String token) {
+        //TODO: send post request using token to get a list of all conversations.
 
 //        return new ArrayList<ConversationOverview>();
 
@@ -154,7 +156,6 @@ public class ConversationsListActivity extends AppCompatActivity {
      * returns a list of all messages in a conversation
      */
     private ArrayList<ConversationOverview> get_dummy_conversation_list() {
-        //TODO
         ArrayList<ConversationOverview> myConvList = new ArrayList<>();
 
         ConversationOverview myConv = new_conv("Thomas Shelby", "1", "By order of the peaky blinders", new Date());
