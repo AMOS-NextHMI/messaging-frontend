@@ -35,8 +35,8 @@ public class LoginDataSource {
 
     private static final int CONNECT_TIMEOUT = 4000;
     private static final int READ_TIMEOUT = 4000;
-    private static final String SERVER_URL = "http://130.149.172.169/register/";
-//    private static final String SERVER_URL = "http://127.0.0.1/login";
+    private static final String SERVER_URL_REGISTER = "http://130.149.172.169/register/";
+    private static final String SERVER_URL_LOGIN = "http://130.149.172.169/login/";
 
     public Result<LoggedInUser> login(String email, String password) {
 
@@ -63,7 +63,7 @@ public class LoginDataSource {
                 @Override
                 public void run() {
                     try  {
-                        responsePayload[0] = loginRequest(SERVER_URL, email_HTTP, password_HTTP);
+                        responsePayload[0] = loginRequest(SERVER_URL_LOGIN, email_HTTP, password_HTTP);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -76,12 +76,11 @@ public class LoginDataSource {
 
             // parse response
             switch (responsePayload[0].code()){
+
                 case(422):
-
                 case(401):
-
                 case(400):
-                    throw new Exception(responsePayload[0].body().string());
+                    throw new Exception(responsePayload[0].body().toString());
 //                    System.out.println("error?" + responsePayload[0].body().toString());
 
                 default:
@@ -90,12 +89,13 @@ public class LoginDataSource {
 
 //            JSONObject responseJSON = new JSONObject().getJSONObject(responsePayload[0].body().toString());
 
-            LoggedInUser loggedInUser =new LoggedInUser(responsePayload[0].body().toString(),email);
+            LoggedInUser loggedInUser = new LoggedInUser(responsePayload[0].body().toString(),email);
 
             return new Result.Success<>(loggedInUser);
         } catch (Exception e) {
             return new Result.Error(new IOException("Error logging in", e));
         }
+
     }
 
     public Result<LoggedInUser> register(String username, String email, String password) {
@@ -124,7 +124,7 @@ public class LoginDataSource {
                 @Override
                 public void run() {
                     try  {
-                        responsePayload[0] = registerRequest(SERVER_URL,username_HTTP,email_HTTP, password_HTTP);
+                        responsePayload[0] = registerRequest(SERVER_URL_REGISTER,username_HTTP,email_HTTP, password_HTTP);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -134,13 +134,13 @@ public class LoginDataSource {
             thread.start();
             thread.join();
 
-            System.out.println(responsePayload[0]);
+            System.out.println("REGISTRATION RESPONSE PAYLOAD: " +responsePayload[0]);
             // parse response
             switch (responsePayload[0].code()){
                 case(422):
                 case(401):
                 case(400):
-                    throw new Exception(responsePayload[0].body().string());
+                    throw new Exception(responsePayload[0].body().toString());
 
 //                    System.out.println("error?" + responsePayload[0].body().toString());
 
@@ -177,8 +177,8 @@ public class LoginDataSource {
                 .post(body)
                 .build();
         try (Response response = client.newCall(request).execute()) {
-            String token = response.body().string();
-            System.out.println("token: "+token);
+            String token = response.body().toString();
+            System.out.println("token BLLAAAA: "+ token);
             return response;
         }
 
@@ -201,7 +201,7 @@ public class LoginDataSource {
                 .post(body)
                 .build();
         try (Response response = client.newCall(request).execute()) {
-            String token = response.body().string();
+            String token = response.body().toString();
             System.out.println("token: "+token);
             return response;
         }

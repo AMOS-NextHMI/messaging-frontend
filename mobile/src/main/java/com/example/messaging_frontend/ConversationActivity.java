@@ -91,21 +91,24 @@ public class ConversationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
-
+        Log.i("ConversationActivity","What?");
         token = this.getIntent().getStringExtra("token");
 
         myActivity= this;
         bindService(new Intent(this, MessageService.class), connection, 0);
         String conversationId = this.getIntent().getStringExtra("conversationId");
 
-        mConversation = messageService.getConversation(token,conversationId);
-
+       // mConversation = messageService.getConversation(token,conversationId);
+        List<Message> msg = new ArrayList<>();
+        mConversation = new Conversation("stupid","",null,msg);
 
 
 
 
         mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
         mMessageAdapter = new ConversationAdapter(this, mConversation.getMessages());
+
+
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
         mMessageRecycler.setAdapter(mMessageAdapter);
         sendButton= (Button) findViewById(R.id.button_send);
@@ -121,7 +124,7 @@ public class ConversationActivity extends AppCompatActivity {
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.conversation_toolbar);
-        toolbar.setTitle(mConversation.getMember().toString());
+//        toolbar.setTitle(mConversation.getMember().toString());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -181,7 +184,7 @@ public class ConversationActivity extends AppCompatActivity {
         Date date = new Date();
         EditText messageSent = (EditText) findViewById(R.id.text_chatbox);
         messageSent.getText().clear();
-        Message message = new Message(mSender.getId(), messageSent.getText().toString(), date.getTime());
+        Message message = new Message("2", messageSent.getText().toString(), date.getTime());
 
         mConversation.getMessages().add(message);
         mMessageAdapter.notifyItemInserted(mConversation.getMessages().indexOf(message));

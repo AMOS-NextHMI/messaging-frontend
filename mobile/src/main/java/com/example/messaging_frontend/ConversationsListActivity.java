@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
@@ -45,14 +46,17 @@ public class ConversationsListActivity extends AppCompatActivity {
 
 
     /* start of recycler view crap */
-    private RecyclerView recyclerView;
-    RecyclerView.Adapter mAdapter;
+     RecyclerView recyclerView;
+    ConversationListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
     MessageService messageService;
     Activity myActivity ;
     List<MetaConversation> metaConversations;
+    List<MetaConversation> dummyMetaConversations;
     String token;
+    public Handler handler = null;
+    public static Runnable runnable = null;
     /* end of recycler view crap */
 
 
@@ -62,9 +66,12 @@ public class ConversationsListActivity extends AppCompatActivity {
         Log.i("ConvListActivity","THE CONTEXT IS:"+String.valueOf(getApplicationContext()));
         myActivity = this;
         metaConversations=new ArrayList<>();
+       // dummyMetaConversations = get_dummy_conversation_list();
         Intent intent = getIntent();
         /* value should contain relevant information that we received from main */
         token = intent.getStringExtra("token");
+        Log.i("token",token);
+        bindService(new Intent(this, MessageService.class), connection, 0);
         String displayName = intent.getStringExtra("display name");
         Toast.makeText(this, "started conv. list act. w/ token: " + token.toString(), Toast.LENGTH_LONG).show();
 
@@ -84,14 +91,22 @@ public class ConversationsListActivity extends AppCompatActivity {
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        recyclerView.setHasFixedSize(true);
+       // recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
+        Log.i("ConvListAdapter",metaConversations.toString());
+
+
+
+
         mAdapter = new ConversationListAdapter(metaConversations);
+
+
+
 
         // create seperators between items
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
@@ -99,8 +114,9 @@ public class ConversationsListActivity extends AppCompatActivity {
 
 
         recyclerView.setAdapter(mAdapter);
-
+        Log.i("ConvListActivity", "I've set the adapter, muh boy.");
         /* end of recycler view crap */
+
 
 
     }

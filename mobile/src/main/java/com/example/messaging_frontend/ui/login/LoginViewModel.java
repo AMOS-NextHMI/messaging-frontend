@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import android.util.Log;
 import android.util.Patterns;
 
 import com.example.messaging_frontend.data.LoginRepository;
@@ -48,6 +49,7 @@ public class LoginViewModel extends ViewModel {
             loginResult.setValue(new LoginResult(new LoggedInUserView(data.getEmail(), data.getLoginToken())));
 
         } else {
+            Log.i("LOGIN", "Login failed.");
             loginResult.setValue(new LoginResult(R.string.login_failed));
         }
     }

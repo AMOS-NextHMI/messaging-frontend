@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -151,13 +152,13 @@ public class LoginActivity extends AppCompatActivity {
         loginIntent.putExtra("login_success", true);
         setResult(AppActivity.RESULT_OK, loginIntent);
 //        setResult(Activity.RESULT_OK);
-
+        Log.i("Friel doesn't care", "We end activity with TOKEN" + model.getToken());
         finish();
 //        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
-//        setResult(Activity.RESULT_CANCELED);
+        setResult(Activity.RESULT_CANCELED);
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 }

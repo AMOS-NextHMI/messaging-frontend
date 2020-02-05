@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.messaging_frontend.ui.login.LoginActivity;
 
@@ -26,7 +27,14 @@ public class AppActivity extends AppCompatActivity {
         setContentView(R.layout.activity_app);
 
         // login
-        init_login();
+        init_login(); //comment out
+
+        // TODO: remove the things here.  They're only there to emulate a valid login
+        //comment in
+        //register
+//        displayName = "string";
+//        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlM2FkYzYwNDNkOGE0MDAzNWFiZWRlMyIsInVzZXJuYW1lIjoic3RyaW5nIiwiaWF0IjoxNTgwOTE3NDEwfQ.tGx_4-OEqa63FT-IiCcrEsHOt5oHIyH-a3E8j-9dQpw";
+//        init_conv_list();
     }
 
 
@@ -39,6 +47,7 @@ public class AppActivity extends AppCompatActivity {
         // launch conversation list with token
         Intent convListIntent = new Intent(AppActivity.this, ConversationsListActivity.class);
         convListIntent.putExtra("token", token);
+        Log.i("AppActivity",token);
         convListIntent.putExtra("display name", displayName);
         finish();
         startActivity(convListIntent);
