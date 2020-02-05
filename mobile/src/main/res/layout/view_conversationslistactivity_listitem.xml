@@ -28,7 +28,6 @@
             android:id="@+id/textViewConversationName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextViewConversationName"
             android:textColor="@android:color/black"
             android:textSize="32dp"
             android:textStyle="bold" />

@@ -78,11 +78,13 @@ public class ConversationActivity extends AppCompatActivity {
 
 
     Conversation mConversation;
-    Contact mSender;
+    String myUserId;
+    String myDisplayName;
     JsonPlaceHolderApi jsonPlaceHolderApi;
     MessageService messageService;
     Activity myActivity;
      String token;
+    String conversationId;
 
 
 
@@ -93,20 +95,24 @@ public class ConversationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_conversation);
         Log.i("ConversationActivity","What?");
         token = this.getIntent().getStringExtra("token");
-
+        myDisplayName = this.getIntent().getStringExtra("displayName");
         myActivity= this;
+        conversationId = this.getIntent().getStringExtra("conversationId");
+
+
+        mConversation = new Conversation(conversationId,"",null,null);
         bindService(new Intent(this, MessageService.class), connection, 0);
-        String conversationId = this.getIntent().getStringExtra("conversationId");
+
 
        // mConversation = messageService.getConversation(token,conversationId);
-        List<Message> msg = new ArrayList<>();
-        mConversation = new Conversation("stupid","",null,msg);
+
+
 
 
 
 
         mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
-        mMessageAdapter = new ConversationAdapter(this, mConversation.getMessages());
+        mMessageAdapter = new ConversationAdapter(this, mConversation.getMessages(),myDisplayName);
 
 
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -184,7 +190,7 @@ public class ConversationActivity extends AppCompatActivity {
         Date date = new Date();
         EditText messageSent = (EditText) findViewById(R.id.text_chatbox);
         messageSent.getText().clear();
-        Message message = new Message("2", messageSent.getText().toString(), date.getTime());
+        Message message = new Message(myUserId,"",String.valueOf(date.getTime()),conversationId, messageSent.getText().toString());
 
         mConversation.getMessages().add(message);
         mMessageAdapter.notifyItemInserted(mConversation.getMessages().indexOf(message));

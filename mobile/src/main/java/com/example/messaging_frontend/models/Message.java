@@ -5,22 +5,50 @@ package com.example.messaging_frontend.models;
  * Messages can be sorted by time_stamp
  */
 public class Message {
-    private String senderUserId;
-    private String messageText;
-    private long timestamp;
+    private String userId;
+    private String _id;
+    String  createdAt;
+    String conversationId;
+    String messageText;
 
-    public Message(String senderUserId, String messageText, long timestamp) {
-        this.senderUserId = senderUserId;
+    public Message(String userId, String _id, String createdAt, String conversationId, String messageText) {
+        this.userId = userId;
+        this._id = _id;
+        this.createdAt = createdAt;
+        this.conversationId = conversationId;
         this.messageText = messageText;
-        this.timestamp = timestamp;
     }
 
-    public String getSenderUserId() {
-        return senderUserId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setSenderUserId(String senderUserId) {
-        this.senderUserId = senderUserId;
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
     }
 
     public String getMessageText() {
@@ -29,13 +57,5 @@ public class Message {
 
     public void setMessageText(String messageText) {
         this.messageText = messageText;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
     }
 }

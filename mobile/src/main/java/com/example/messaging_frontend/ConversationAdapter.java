@@ -21,12 +21,13 @@ import static android.widget.Toast.makeText;
 public class ConversationAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
-    private LoggedInUser loggedUser;
+    private String userId;
     private Context mContext;
     private List<Message> mMessageList;
 
-    public ConversationAdapter(Context context, List<Message> messageList) {
+    public ConversationAdapter(Context context, List<Message> messageList,String displayName) {
         mContext = context;
+        this.userId =userId;
         if(messageList==null){
             mMessageList = new ArrayList<>();
         }
@@ -46,7 +47,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
 
 
         //if (message.getUserId().equals(loggedUser.getUserId()) ){
-        if (message.getSenderUserId() == "2" ){
+        if (message.getUserId() == userId ){
 
             // If the current user is the sender of the message
 
@@ -134,7 +135,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
             // Format the stored timestamp into a readable String using method.
            // timeText.setText("11:00");
 
-            nameText.setText(message.getSenderUserId());
+            nameText.setText(message.getUserId());
 
             // Insert the profile image from the URL into the ImageView.
             //Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage);

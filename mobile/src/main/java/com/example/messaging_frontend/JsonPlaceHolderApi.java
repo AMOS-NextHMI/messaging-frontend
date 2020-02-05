@@ -13,6 +13,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Url;
 
 public interface JsonPlaceHolderApi {
 
@@ -23,7 +24,7 @@ public interface JsonPlaceHolderApi {
 
 
     @GET("conversations")
-    Call<List<MetaConversation>> getConversationOverview(@Header("Authorization") String authKey,@Header("Content-Type") String contentType);
+    Call<List<MetaConversation>> getConversationOverview(@Header("Authorization") String authKey);
 
 
     @POST("messages")

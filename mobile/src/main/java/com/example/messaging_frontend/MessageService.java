@@ -70,10 +70,10 @@ public class MessageService extends Service {
                     getConversationOverview();
 
 
-                handler.postDelayed(runnable, 10000);
+                handler.postDelayed(runnable, 1000);
             }
         };
-        handler.postDelayed(runnable, 15000);
+        handler.postDelayed(runnable, 1500);
 
     }
 
@@ -94,7 +94,7 @@ public class MessageService extends Service {
 
     public void getConversationOverview()  {
         if(boundActivity.size()!= 0) {
-
+            Log.i("token",token);
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("http://130.149.172.169/")
                     .addConverterFactory(GsonConverterFactory.create())
@@ -102,7 +102,7 @@ public class MessageService extends Service {
 
             jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
             if (token != null) {
-                Call<List<MetaConversation>> call = jsonPlaceHolderApi.getConversationOverview(token, "application/json");
+                Call<List<MetaConversation>> call = jsonPlaceHolderApi.getConversationOverview(token);
 
                 call.enqueue(new Callback<List<MetaConversation>>() {
                     @Override
@@ -114,26 +114,7 @@ public class MessageService extends Service {
                         }
 
                         Log.i("MessageService, getConversationOverview()", "Successful" + response.body());
-                     //   if (metaConversations.size() == 0) {
-//                            if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationsListActivity")) {
-//
-//                                metaConversations = response.body();
-//                                ConversationsListActivity conversationsListActivity = (ConversationsListActivity) boundActivity.get(boundActivity.size() - 1);
-//                                conversationsListActivity.metaConversations = response.body();
-//
-//
-//                                conversationsListActivity.mAdapter.notifyDataSetChanged();
-//
-//                            }
-//
-//                        }
 
-
-                        //   if (metaConversations.size() != response.body().size()) {
-                          //      // a new conversation started
-                          //      metaConversations = response.body();
-
-                        //    } else if (!metaConversations.equals(response.body())) {
 
                                 //if activityListView  is open
                                 if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationsListActivity")) {
@@ -141,42 +122,60 @@ public class MessageService extends Service {
                                     ConversationsListActivity conversationsListActivity = (ConversationsListActivity) boundActivity.get(boundActivity.size() - 1);
                                     conversationsListActivity.metaConversations.removeAll(conversationsListActivity.metaConversations);
                                     conversationsListActivity.metaConversations.addAll(response.body());
+
+                                    for(MetaConversation mc : response.body()){
+                                        Log.i("PLEASE",mc.get_id());
+                                    }
                                     conversationsListActivity.mAdapter.notifyDataSetChanged();
 
                                 }
 
 
-                                if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationActivity")) {
-                                    ConversationActivity conversationActivity = (ConversationActivity) boundActivity.get(boundActivity.size() - 1);
-                                    String currentConversationID = conversationActivity.mConversation.getConversationId();
-
-                                    List<MetaConversation> updatedConversations = response.body();
-                                    updatedConversations.removeAll(metaConversations);
-
-                                    for (MetaConversation updatedConv : updatedConversations) {
-
-                                        for (MetaConversation oldConv : metaConversations) {
-                                            if (oldConv.getConversationId() == updatedConv.getConversationId()) {
-                                                int indexOldConv = metaConversations.indexOf(oldConv);
-                                                metaConversations.set(indexOldConv, updatedConv); //TO DO : MAKE SURE IT UPDATES THE LIST
-
-                                            }
-                                        }
-                                    }
-
-                                    for (MetaConversation conv : updatedConversations) {
-                                        if (conv.getConversationId().contentEquals(currentConversationID)) {
-
-                                            Conversation conversation = getConversation(currentConversationID, token);
-                                            conversationActivity.mConversation = conversation;
-                                            conversationActivity.mMessageAdapter.notifyDataSetChanged();
-                                        }
-                                    }
-                                }
-
-                                //if none of the above, then notification
-
-                      //      }
+//                                if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationActivity")) {
+//                                    ConversationActivity conversationActivity = (ConversationActivity) boundActivity.get(boundActivity.size() - 1);
+//                                    String currentConversationID = conversationActivity.mConversation.getConversationId();
+//
+//                                    List<MetaConversation> conversations = response.body();
+//                                    for(MetaConversation mc : response.body()){
+//                                        if(currentConversationID == mc.get_id()){
+//                                            Conversation conversation = getConversation(currentConversationID, token);
+//
+//
+//                                            conversationActivity.mConversation = conversation;
+//                                            conversationActivity.mMessageAdapter.notifyDataSetChanged();
+//
+//                                        }
+//                                    }
+//
+//
+////                                    updatedConversations.removeAll(metaConversations);
+////
+////                                    for (MetaConversation updatedConv : updatedConversations) {
+////
+////                                        for (MetaConversation oldConv : metaConversations) {
+////                                            if (oldConv.getConversationId() == updatedConv.getConversationId()) {
+////                                                int indexOldConv = metaConversations.indexOf(oldConv);
+////                                                metaConversations.set(indexOldConv, updatedConv); //TO DO : MAKE SURE IT UPDATES THE LIST
+////
+////                                            }
+////                                        }
+////                                    }
+////
+////                                    for (MetaConversation conv : updatedConversations) {
+////                                        if (conv.getConversationId() != null) {
+////                                            if (conv.getConversationId().contentEquals(currentConversationID)) {
+////
+////                                                Conversation conversation = getConversation(currentConversationID, token);
+////                                                conversationActivity.mConversation = conversation;
+////                                                conversationActivity.mMessageAdapter.notifyDataSetChanged();
+////                                            }
+////                                        }
+////                                    }
+////                                }
+//
+//                                //if none of the above, then notification
+//
+//                            }
 
 
 
@@ -199,7 +198,7 @@ public class MessageService extends Service {
     public Conversation getConversation( String token , String conversationId){
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://130.149.172.169/conversations/conversationId="+conversationId)
+                .baseUrl("http://130.149.172.169/conversations/conversationId="+conversationId+"/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -228,121 +227,73 @@ public class MessageService extends Service {
 
         return conversation;
     }
-    /**
-     * returns a list of all messages in a conversation
-     */
-    private ArrayList<MetaConversation> get_dummy_conversation_list() {
-        ArrayList<MetaConversation> myConvList = new ArrayList<>();
-
-        MetaConversation myConv = new_conv("Thomas Shelby", "1", "By order of the peaky blinders", 0);
-        myConvList.add(myConv);
-
-        myConv = new_conv("Arthur Shelby", "U665354", "Linda!", 0);
-        myConvList.add(myConv);
-
-
-        myConv = new_conv("John Shelby", "665355", "", 0);
-        myConvList.add(myConv);
-
-
-        myConv = new_conv("Muh boy2", "665357", "I didn't do it.", 0);
-        myConvList.add(myConv);
-
-        myConv = new_conv("Muh boy3", "665358", "I didn't do it.", 0);
-        myConvList.add(myConv);
-
-        myConv = new_conv("Muh boy4", "665359", "I didn't do it.", 0);
-        myConvList.add(myConv);
-
-        myConv = new_conv("Muh boy5", "665360", "I didn't do it.", 0);
-        myConvList.add(myConv);
-
-        myConv = new_conv("Muh boy6", "665361", "I didn't do it.", 0);
-        myConvList.add(myConv);
-
-        return myConvList;
-    }
-
-    public MetaConversation new_conv(String name, String id, String body, int timeStamp){
-
-        Message myMessage = new Message(id, body, timeStamp);
-        MetaConversation myConv = new MetaConversation(id, myMessage);
-
-        return myConv;
-    }
-
-
-    private Conversation getDummyConversation() {
-        ArrayList<Message> myMsgs = new ArrayList<>();
-        ArrayList<Contact> members = new ArrayList<>();
-        members.add( new Contact("Mahmoud", "1"));
-        myMsgs.add(new Message("bla","bla",0));
-
-        Conversation myConv = new Conversation("conv1", "",members,myMsgs) ;
-
-        return myConv;
-    }
-
-    public void getDummyConversationOverview() throws InterruptedException {
-
-        if (boundActivity.size() > 0) {
-            Log.i("Feriel","is getting smwhere");
 
 
 
-                 //new conversation started
 
 
-
-              //  if activityListView  is open
-                if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationsListActivity")) {
-                    Log.i("MessageService", "in ConvListActivity");
-
-                    ConversationsListActivity conversationsListActivity = (ConversationsListActivity) boundActivity.get(boundActivity.size() - 1);
-                    conversationsListActivity.metaConversations.removeAll(conversationsListActivity.metaConversations);
-                    conversationsListActivity.metaConversations.addAll(get_dummy_conversation_list());
-                    conversationsListActivity.mAdapter.notifyDataSetChanged();
-                }
-
-
-                if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationActivity")) {
-                    ConversationActivity conversationActivity = (ConversationActivity) boundActivity.get(boundActivity.size() - 1);
-
-
-                    String currentConversationID = conversationActivity.mConversation.getConversationId();
-
-                    List<MetaConversation> updatedConversations = metaConversations;
-                    updatedConversations.removeAll(metaConversations);
-
-                    for (MetaConversation updatedConv : updatedConversations) {
-
-                        for (MetaConversation oldConv : metaConversations) {
-                            if (oldConv.getConversationId() == updatedConv.getConversationId()) {
-                                int indexOldConv = metaConversations.indexOf(oldConv);
-                                metaConversations.set(indexOldConv, updatedConv); //TO DO : MAKE SURE IT UPDATES THE LIST
-
-                            }
-                        }
-                    }
-
-                    for (MetaConversation conv : updatedConversations) {
-                        if (conv.getConversationId().contentEquals(currentConversationID)) {
-
-                            Conversation conversation = getDummyConversation();
-                            conversationActivity.mConversation = conversation;
-                            conversationActivity.mMessageAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-
-                //if none of the above, then notification
-
-
-        }
-    }
-
-
-
+//
+//
+//    public void getDummyConversationOverview() throws InterruptedException {
+//
+//        if (boundActivity.size() > 0) {
+//            Log.i("Feriel","is getting smwhere");
+//
+//
+//
+//                 //new conversation started
+//
+//
+//
+//              //  if activityListView  is open
+//                if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationsListActivity")) {
+//                    Log.i("MessageService", "in ConvListActivity");
+//
+//                    ConversationsListActivity conversationsListActivity = (ConversationsListActivity) boundActivity.get(boundActivity.size() - 1);
+//                    conversationsListActivity.metaConversations.removeAll(conversationsListActivity.metaConversations);
+//                    conversationsListActivity.metaConversations.addAll(get_dummy_conversation_list());
+//                    conversationsListActivity.mAdapter.notifyDataSetChanged();
+//                }
+//
+//
+//                if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationActivity")) {
+//                    ConversationActivity conversationActivity = (ConversationActivity) boundActivity.get(boundActivity.size() - 1);
+//
+//
+//                    String currentConversationID = conversationActivity.mConversation.getConversationId();
+//
+//                    List<MetaConversation> updatedConversations = metaConversations;
+//                    updatedConversations.removeAll(metaConversations);
+//
+//                    for (MetaConversation updatedConv : updatedConversations) {
+//
+//                        for (MetaConversation oldConv : metaConversations) {
+//                            if (oldConv.getConversationId() == updatedConv.getConversationId()) {
+//                                int indexOldConv = metaConversations.indexOf(oldConv);
+//                                metaConversations.set(indexOldConv, updatedConv); //TO DO : MAKE SURE IT UPDATES THE LIST
+//
+//                            }
+//                        }
+//                    }
+//
+//                    for (MetaConversation conv : updatedConversations) {
+//                        if (conv.getConversationId().contentEquals(currentConversationID)) {
+//
+//                            Conversation conversation = getDummyConversation();
+//                            conversationActivity.mConversation = conversation;
+//                            conversationActivity.mMessageAdapter.notifyDataSetChanged();
+//                        }
+//                    }
+//                }
+//
+//                //if none of the above, then notification
+//
+//
+//        }
+//    }
+//
+//
+//
 
 
     public void sendMessage(String conversationId, String messageText) {
