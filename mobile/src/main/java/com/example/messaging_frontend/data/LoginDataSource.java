@@ -3,9 +3,10 @@ package com.example.messaging_frontend.data;
 import android.util.Log;
 
 import com.example.messaging_frontend.data.model.LoggedInUser;
-
+//import CountDownLatch
 
 import org.json.JSONObject;
+import com.example.messaging_frontend.data.ReturnPair;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -21,7 +22,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.concurrent.CountDownLatch;
 
+import kotlin.Function;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -35,8 +38,8 @@ public class LoginDataSource {
 
     private static final int CONNECT_TIMEOUT = 4000;
     private static final int READ_TIMEOUT = 4000;
-    private static final String SERVER_URL = "http://130.149.172.169/register/";
-//    private static final String SERVER_URL = "http://127.0.0.1/login";
+    private static final String SERVER_URL_REGISTER = "http://130.149.172.169/register/";
+    private static final String SERVER_URL_LOGIN = "http://130.149.172.169/login/";
 
     public Result<LoggedInUser> login(String email, String password) {
 
@@ -56,14 +59,19 @@ public class LoginDataSource {
             final String email_HTTP = email;
             final String password_HTTP = password;
 
-            final Response[] responsePayload = new Response[1];
+
+            final ReturnPair[] returnPairs = new ReturnPair[1];
+            final CountDownLatch latch = new CountDownLatch(1);
 
             Thread thread = new Thread(new Runnable() {
 
                 @Override
                 public void run() {
                     try  {
-                        responsePayload[0] = loginRequest(SERVER_URL, email_HTTP, password_HTTP);
+                        ReturnPair r = loginRequest(SERVER_URL_LOGIN, email_HTTP, password_HTTP);
+                        returnPairs[0] = r;
+
+                        latch.countDown();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -71,31 +79,32 @@ public class LoginDataSource {
             });
 
             thread.start();
-            thread.join();
+            latch.await();
+
 
 
             // parse response
-            switch (responsePayload[0].code()){
+            switch (returnPairs[0].code){
+
                 case(422):
-
                 case(401):
-
                 case(400):
-                    throw new Exception(responsePayload[0].body().string());
+                    throw new Exception(returnPairs[0].message);
 //                    System.out.println("error?" + responsePayload[0].body().toString());
 
                 default:
-                    System.out.println("success! WOOHOO"+ responsePayload[0].body().toString());
+                    System.out.println("success! WOOHOO"+ returnPairs[0].message);
             }
 
 //            JSONObject responseJSON = new JSONObject().getJSONObject(responsePayload[0].body().toString());
 
-            LoggedInUser loggedInUser =new LoggedInUser(responsePayload[0].body().toString(),email);
+            LoggedInUser loggedInUser = new LoggedInUser(returnPairs[0].message,email);
 
             return new Result.Success<>(loggedInUser);
         } catch (Exception e) {
-            return new Result.Error(new IOException("Error logging in", e));
+            return new Result.Error(new IOException("Error logging in "+  e.getMessage(),e));
         }
+
     }
 
     public Result<LoggedInUser> register(String username, String email, String password) {
@@ -124,7 +133,7 @@ public class LoginDataSource {
                 @Override
                 public void run() {
                     try  {
-                        responsePayload[0] = registerRequest(SERVER_URL,username_HTTP,email_HTTP, password_HTTP);
+                        responsePayload[0] = registerRequest(SERVER_URL_REGISTER,username_HTTP,email_HTTP, password_HTTP);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -134,15 +143,14 @@ public class LoginDataSource {
             thread.start();
             thread.join();
 
-            System.out.println(responsePayload[0]);
+            System.out.println("REGISTRATION RESPONSE PAYLOAD: " +responsePayload[0]);
             // parse response
             switch (responsePayload[0].code()){
                 case(422):
-
                 case(401):
-
                 case(400):
-                    throw new Exception(responsePayload[0].body().string());
+                    throw new Exception(responsePayload[0].body().toString());
+
 //                    System.out.println("error?" + responsePayload[0].body().toString());
 
                 default:
@@ -163,7 +171,7 @@ public class LoginDataSource {
 
 
 
-    private static Response loginRequest(String ServerUrl, String email, String password) throws Exception {
+    private static ReturnPair loginRequest(String ServerUrl, String email, String password) throws Exception {
         final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
         String jsonLoginString = new JSONObject()
@@ -179,11 +187,11 @@ public class LoginDataSource {
                 .build();
         try (Response response = client.newCall(request).execute()) {
             String token = response.body().string();
-            System.out.println("token: "+token);
-            return response;
+            int code = response.code();
+            System.out.println("token BLLAAAA: "+ token);
+            ReturnPair r = new ReturnPair(token,code);
+            return r;
         }
-
-
     }
 
     private static Response registerRequest(String ServerUrl, String username,String email, String password) throws Exception {
@@ -202,7 +210,7 @@ public class LoginDataSource {
                 .post(body)
                 .build();
         try (Response response = client.newCall(request).execute()) {
-            String token = response.body().string();
+            String token = response.body().toString();
             System.out.println("token: "+token);
             return response;
         }

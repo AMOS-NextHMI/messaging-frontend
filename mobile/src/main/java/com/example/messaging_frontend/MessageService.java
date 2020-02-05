@@ -1,22 +1,25 @@
 package com.example.messaging_frontend;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+import com.example.messaging_frontend.models.Contact;
+import com.example.messaging_frontend.models.Conversation;
+import com.example.messaging_frontend.models.Message;
+import com.example.messaging_frontend.models.MetaConversation;
+import java.util.ArrayList;
+import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.IOException;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
-import okio.ByteString;
 
 public class MessageService extends Service {
     // For help see:
@@ -25,8 +28,22 @@ public class MessageService extends Service {
 
     private static final String TAG = "MessageService";
     private final IBinder binder = new LocalBinder();
-    private OkHttpClient client;
-    private WebSocket ws;
+
+
+    private static String API_BASE_URL = "https://130.149.172.169/";
+    private List<MetaConversation> metaConversations;
+    public Handler handler = null;
+    public static Runnable runnable = null;
+
+    private List<Activity> boundActivity;
+    Conversation conversation;
+    String token;
+
+    //String  authKey="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMzczNjYyOGNjN2FjMDAzYjNmYzhhZSIsInVzZXJuYW1lIjoiU1RSSU5HIiwiaWF0IjoxNTgwNjc2NzA2fQ.zGGnDZ2qEeBZ9FbpkUmtry_pL594lIjoYXELziKDAnQ";
+    JsonPlaceHolderApi jsonPlaceHolderApi;
+
+
+
 
     // The binder which we give to the client via onBind()
     public class LocalBinder extends Binder {
@@ -38,10 +55,31 @@ public class MessageService extends Service {
 
     @Override
     public void onCreate() {
+
+        boundActivity = new ArrayList<>();
+        metaConversations = new ArrayList<>();
+
+        handler = new Handler();
+
+        runnable = new Runnable() {
+            public void run() {
+
+
+                    Log.i("MessageService", boundActivity.toString());
+
+                    getConversationOverview();
+
+
+                handler.postDelayed(runnable, 10000);
+            }
+        };
+        handler.postDelayed(runnable, 15000);
+
     }
 
     @Override
     public IBinder onBind(Intent intent) {
+
         return binder;
     }
 
@@ -52,94 +90,289 @@ public class MessageService extends Service {
         return START_STICKY;
     }
 
+
+
+    public void getConversationOverview()  {
+        if(boundActivity.size()!= 0) {
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("http://130.149.172.169/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+            if (token != null) {
+                Call<List<MetaConversation>> call = jsonPlaceHolderApi.getConversationOverview(token, "application/json");
+
+                call.enqueue(new Callback<List<MetaConversation>>() {
+                    @Override
+                    public void onResponse(Call<List<MetaConversation>> call, Response<List<MetaConversation>> response) {
+                        if (!response.isSuccessful()) {
+
+                            Log.i("MessageService, getConversationOverview()", "Unsuccessful: " + response);
+                            return;
+                        }
+
+                        Log.i("MessageService, getConversationOverview()", "Successful" + response.body());
+                     //   if (metaConversations.size() == 0) {
+//                            if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationsListActivity")) {
+//
+//                                metaConversations = response.body();
+//                                ConversationsListActivity conversationsListActivity = (ConversationsListActivity) boundActivity.get(boundActivity.size() - 1);
+//                                conversationsListActivity.metaConversations = response.body();
+//
+//
+//                                conversationsListActivity.mAdapter.notifyDataSetChanged();
+//
+//                            }
+//
+//                        }
+
+
+                        //   if (metaConversations.size() != response.body().size()) {
+                          //      // a new conversation started
+                          //      metaConversations = response.body();
+
+                        //    } else if (!metaConversations.equals(response.body())) {
+
+                                //if activityListView  is open
+                                if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationsListActivity")) {
+
+                                    ConversationsListActivity conversationsListActivity = (ConversationsListActivity) boundActivity.get(boundActivity.size() - 1);
+                                    conversationsListActivity.metaConversations.removeAll(conversationsListActivity.metaConversations);
+                                    conversationsListActivity.metaConversations.addAll(response.body());
+                                    conversationsListActivity.mAdapter.notifyDataSetChanged();
+
+                                }
+
+
+                                if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationActivity")) {
+                                    ConversationActivity conversationActivity = (ConversationActivity) boundActivity.get(boundActivity.size() - 1);
+                                    String currentConversationID = conversationActivity.mConversation.getConversationId();
+
+                                    List<MetaConversation> updatedConversations = response.body();
+                                    updatedConversations.removeAll(metaConversations);
+
+                                    for (MetaConversation updatedConv : updatedConversations) {
+
+                                        for (MetaConversation oldConv : metaConversations) {
+                                            if (oldConv.getConversationId() == updatedConv.getConversationId()) {
+                                                int indexOldConv = metaConversations.indexOf(oldConv);
+                                                metaConversations.set(indexOldConv, updatedConv); //TO DO : MAKE SURE IT UPDATES THE LIST
+
+                                            }
+                                        }
+                                    }
+
+                                    for (MetaConversation conv : updatedConversations) {
+                                        if (conv.getConversationId().contentEquals(currentConversationID)) {
+
+                                            Conversation conversation = getConversation(currentConversationID, token);
+                                            conversationActivity.mConversation = conversation;
+                                            conversationActivity.mMessageAdapter.notifyDataSetChanged();
+                                        }
+                                    }
+                                }
+
+                                //if none of the above, then notification
+
+                      //      }
+
+
+
+                    }
+
+
+                    @Override
+                    public void onFailure(Call<List<MetaConversation>> call, Throwable t) {
+                        Log.i("MessageService, getConversationOverview()", t.getMessage());
+                    }
+                });
+            }
+            return;
+        }
+    }
+
+
+
+
+    public Conversation getConversation( String token , String conversationId){
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://130.149.172.169/conversations/conversationId="+conversationId)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+
+        Call<Conversation> call = jsonPlaceHolderApi.getConversation(token);
+
+        call.enqueue(new Callback<Conversation>() {
+            @Override
+            public void onResponse(Call<Conversation> call, Response<Conversation> response) {
+                if(!response.isSuccessful()){
+                    Log.i("MessageService, getConversation()","Unsuccessful: "+ response);
+
+                    return ;
+                }
+                Log.i("MessageService, getConversation()",   "ConversationID: "+"\n"+ response.body().getConversationId()+"\n"+"Conversation members: "+response.body().getMember().toString()+"\n"+ "Conversation messages: "+response.body().getMessages().toString());
+
+                conversation = new Conversation(response.body().getConversationId(),response.body().getName(),response.body().getMember(),response.body().getMessages());
+
+            }
+            @Override
+            public void onFailure(Call<Conversation> call, Throwable t) {
+                Log.i("MessageService, getConversation()",t.getMessage());
+            }
+        });
+
+        return conversation;
+    }
+    /**
+     * returns a list of all messages in a conversation
+     */
+    private ArrayList<MetaConversation> get_dummy_conversation_list() {
+        ArrayList<MetaConversation> myConvList = new ArrayList<>();
+
+        MetaConversation myConv = new_conv("Thomas Shelby", "1", "By order of the peaky blinders", 0);
+        myConvList.add(myConv);
+
+        myConv = new_conv("Arthur Shelby", "U665354", "Linda!", 0);
+        myConvList.add(myConv);
+
+
+        myConv = new_conv("John Shelby", "665355", "", 0);
+        myConvList.add(myConv);
+
+
+        myConv = new_conv("Muh boy2", "665357", "I didn't do it.", 0);
+        myConvList.add(myConv);
+
+        myConv = new_conv("Muh boy3", "665358", "I didn't do it.", 0);
+        myConvList.add(myConv);
+
+        myConv = new_conv("Muh boy4", "665359", "I didn't do it.", 0);
+        myConvList.add(myConv);
+
+        myConv = new_conv("Muh boy5", "665360", "I didn't do it.", 0);
+        myConvList.add(myConv);
+
+        myConv = new_conv("Muh boy6", "665361", "I didn't do it.", 0);
+        myConvList.add(myConv);
+
+        return myConvList;
+    }
+
+    public MetaConversation new_conv(String name, String id, String body, int timeStamp){
+
+        Message myMessage = new Message(id, body, timeStamp);
+        MetaConversation myConv = new MetaConversation(id, myMessage);
+
+        return myConv;
+    }
+
+
+    private Conversation getDummyConversation() {
+        ArrayList<Message> myMsgs = new ArrayList<>();
+        ArrayList<Contact> members = new ArrayList<>();
+        members.add( new Contact("Mahmoud", "1"));
+        myMsgs.add(new Message("bla","bla",0));
+
+        Conversation myConv = new Conversation("conv1", "",members,myMsgs) ;
+
+        return myConv;
+    }
+
+    public void getDummyConversationOverview() throws InterruptedException {
+
+        if (boundActivity.size() > 0) {
+            Log.i("Feriel","is getting smwhere");
+
+
+
+                 //new conversation started
+
+
+
+              //  if activityListView  is open
+                if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationsListActivity")) {
+                    Log.i("MessageService", "in ConvListActivity");
+
+                    ConversationsListActivity conversationsListActivity = (ConversationsListActivity) boundActivity.get(boundActivity.size() - 1);
+                    conversationsListActivity.metaConversations.removeAll(conversationsListActivity.metaConversations);
+                    conversationsListActivity.metaConversations.addAll(get_dummy_conversation_list());
+                    conversationsListActivity.mAdapter.notifyDataSetChanged();
+                }
+
+
+                if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationActivity")) {
+                    ConversationActivity conversationActivity = (ConversationActivity) boundActivity.get(boundActivity.size() - 1);
+
+
+                    String currentConversationID = conversationActivity.mConversation.getConversationId();
+
+                    List<MetaConversation> updatedConversations = metaConversations;
+                    updatedConversations.removeAll(metaConversations);
+
+                    for (MetaConversation updatedConv : updatedConversations) {
+
+                        for (MetaConversation oldConv : metaConversations) {
+                            if (oldConv.getConversationId() == updatedConv.getConversationId()) {
+                                int indexOldConv = metaConversations.indexOf(oldConv);
+                                metaConversations.set(indexOldConv, updatedConv); //TO DO : MAKE SURE IT UPDATES THE LIST
+
+                            }
+                        }
+                    }
+
+                    for (MetaConversation conv : updatedConversations) {
+                        if (conv.getConversationId().contentEquals(currentConversationID)) {
+
+                            Conversation conversation = getDummyConversation();
+                            conversationActivity.mConversation = conversation;
+                            conversationActivity.mMessageAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+
+                //if none of the above, then notification
+
+
+        }
+    }
+
+
+
+
+
+    public void sendMessage(String conversationId, String messageText) {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://130.149.172.169/conversations/conversationId="+conversationId)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        Call<Message> call = jsonPlaceHolderApi.sendMessage(token,messageText);
+    }
+
+
+    public void addBoundActivity(Activity activity) {boundActivity.add(activity);
+    }
+    public void removeBoundActivity(Activity activity){
+        boundActivity.remove(activity);
+    }
     @Override
     public void onDestroy() {
+        handler.removeCallbacks(runnable);
+
         Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show();
+
     }
 
     public void testMethod() {
         Toast.makeText(this, "hello, this is the background service", Toast.LENGTH_SHORT).show();
     }
-
-    // Open and maintain websocket, for help see https://medium.com/@ssaurel/learn-to-use-websockets-on-android-with-okhttp-ba5f00aea988
-    // Currently using echo-test-server wss://echo.websocket.org
-    public final class WebSocketListenerHelper extends WebSocketListener {
-        private static final int NORMAL_CLOSURE_STATUS = 1000;
-
-        @Override
-        public void onOpen(WebSocket webSocket, okhttp3.Response response) {
-            webSocket.send("Hello!");
-            Log.i(TAG, "SENT: " + "Hello!");
-        }
-
-        /* The server notifies that a new message got received
-        @param text: Identifier of the conversation*/
-        @Override
-        public void onMessage(WebSocket webSocket, String text) {
-            Log.i(TAG, "RECEIVED: " + text);
-
-
-        }
-        /*
-        * The server notifies that a new message got received
-        * @param text: Identifier of the conversation
-        */
-        @Override
-        public void onMessage(WebSocket webSocket, ByteString bytes) {
-            Log.i(TAG, "RECEIVED BYTES: " + bytes.hex());
-        }
-
-        @Override
-        public void onClosing(WebSocket webSocket, int code, String reason) {
-            Log.i(TAG, "CLOSING: " + code + " / " + reason);
-            webSocket.close(NORMAL_CLOSURE_STATUS, null);
-        }
-
-        @Override
-        public void onFailure(WebSocket webSocket, Throwable t, okhttp3.Response response) {
-            Log.i(TAG, "ERROR: " + t.getMessage());
-        }
-    }
-
-    public void startWebSocket(String url) {
-        Request request = new Request.Builder().url(url).build();
-        WebSocketListenerHelper listener = new WebSocketListenerHelper();
-        client = new OkHttpClient();
-        ws = client.newWebSocket(request, listener);
-        //client.dispatcher().executorService().shutdown();
-    }
-    /*
-    * The app informs the server that a new message was sent
-    * */
-    public void sendRequest(String request) {
-        if (ws != null) {
-            ws.send(request);
-            Log.i(TAG, "SENT: " + request);
-        } else {
-            Log.i(TAG, "ws == null");
-        }
-    }
-
-
-
-
-    String post(String subUrl, String json, String authentication) throws IOException {
-        MediaType JSON = MediaType.get("application/json; charset=utf-8");
-
-        OkHttpClient client = new OkHttpClient();
-
-        RequestBody body = RequestBody.create(json, JSON);
-        Request request = new Request.Builder()
-                .url("http://130.149.172.169/"+subUrl)
-                .post(body)
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            return response.body().string();
-        }
-    }
-
-
-
 
 
 }

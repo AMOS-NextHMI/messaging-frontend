@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ComponentName;
@@ -13,7 +15,9 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -34,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //Buttons
         Button button = findViewById(R.id.notificationButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -43,30 +48,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         final EditText editText = findViewById(R.id.editText);
+
         Button openSocketButton = findViewById(R.id.openSocketButton);
         openSocketButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mBound) {
-                    mService.startWebSocket("wss://echo.websocket.org");
+                   // mService.startWebSocket("wss://echo.websocket.org");
                 }
             }
         });
+
         Button sendButton = findViewById(R.id.sendButton);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mBound) {
-                    mService.sendRequest(editText.getText().toString());
+                   // mService.sendRequest(editText.getText().toString());
                 }
             }
         });
+
         Button conversationListButton = findViewById(R.id.conversationListButton);
         conversationListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mBound) {
-                    launchConversationListActivity("Baby Yoda's 50.");
+                    launchConversationListActivity("Baby Yoda's 50.", "Martha Stewart");
                 }
             }
         });
@@ -80,15 +88,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button loginButton = findViewById(R.id.login_Button);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mBound) {
-                    launchLoginActivity("1");
-                }
-            }
-        });
+//        Button loginButton = findViewById(R.id.login_Button);
+//        loginButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (mBound) {
+//                    launchLoginActivity("1");
+//                }
+//            }
+//        });
 
         Button registerButton = findViewById(R.id.registerButton);
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +108,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button appButton = findViewById(R.id.App_Button);
+        appButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mBound) {
+                    launchAppActivity("1");
+                }
+            }
+        });
 
         createNotificationChannel();
 
@@ -177,10 +194,11 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Launches a conversation list and passes it a TBD value
      */
-    private void launchConversationListActivity(String value) {
+    private void launchConversationListActivity(String token, String userName) {
         // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
         Intent myIntent = new Intent(MainActivity.this, ConversationsListActivity.class);
-        myIntent.putExtra("key", value); //Optional parameters - This can be used to pass parameters to the new activity.
+        myIntent.putExtra("token", token);
+        myIntent.putExtra("display name", userName);
         MainActivity.this.startActivity(myIntent);
     }
 
@@ -202,6 +220,12 @@ public class MainActivity extends AppCompatActivity {
         // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
         Intent myIntent = new Intent(MainActivity.this, RegisterActivity.class);
         myIntent.putExtra("conv_id", value); //Optional parameters - This can be used to pass parameters to the new activity.
+        MainActivity.this.startActivity(myIntent);
+    }
+
+    void launchAppActivity(String value) {
+        // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
+        Intent myIntent = new Intent(MainActivity.this, AppActivity.class);
         MainActivity.this.startActivity(myIntent);
     }
 

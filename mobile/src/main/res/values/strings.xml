@@ -12,6 +12,7 @@
     <string name="not_matching_pws">Passwords do not match tho!</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="registration_failed">"Registration failed"</string>
     <string name="action_settings">action_settings</string>
     <string name="action_add_conversation">action_add_conversation</string>
     <string name="action_search">action_search</string>

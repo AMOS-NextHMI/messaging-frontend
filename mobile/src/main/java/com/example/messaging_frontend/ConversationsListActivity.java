@@ -2,20 +2,32 @@ package com.example.messaging_frontend;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.messaging_frontend.models.Contact;
+import com.example.messaging_frontend.models.Message;
+import com.example.messaging_frontend.models.MetaConversation;
+
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -35,33 +47,44 @@ public class ConversationsListActivity extends AppCompatActivity {
 
 
     /* start of recycler view crap */
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
+     RecyclerView recyclerView;
+    ConversationListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    MessageService messageService;
+    Activity myActivity ;
+    List<MetaConversation> metaConversations;
+    List<MetaConversation> dummyMetaConversations;
+    String token;
+    public Handler handler = null;
+    public static Runnable runnable = null;
     /* end of recycler view crap */
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        Log.i("ConvListActivity","THE CONTEXT IS:"+String.valueOf(getApplicationContext()));
+        myActivity = this;
+        metaConversations=new ArrayList<>();
+       // dummyMetaConversations = get_dummy_conversation_list();
         Intent intent = getIntent();
         /* value should contain relevant information that we received from main */
-        String value = intent.getStringExtra("key");
-        Toast.makeText(this, "started conv. list act. w/ value: " + value.toString(), Toast.LENGTH_LONG).show();
+        token = intent.getStringExtra("token");
+        Log.i("token",token);
+        bindService(new Intent(this, MessageService.class), connection, 0);
+        String displayName = intent.getStringExtra("display name");
+        Toast.makeText(this, "started conv. list act. w/ token: " + token.toString(), Toast.LENGTH_LONG).show();
 
         // Set up layout
         setContentView(R.layout.activity_conversations_list);
         // TODO: connect those two somehow: R.id.toolbar and R.menu.conversation_list_bar
         Toolbar toolbar = (Toolbar) findViewById(R.id.conversation_list_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Chats");
+//        getSupportActionBar().setTitle("Chats");
+        getSupportActionBar().setTitle(displayName);
 
-        // TODO: Initialize conversationList
-        // query all meta-conversations
 
-        ArrayList<ConversationOverview> myConversations = get_conversation_list();
 //        mAdapter.notifyDataSetChanged();
         // TODO: create a conversation for each element in the list
         /* start of recycler view crap */
@@ -69,14 +92,22 @@ public class ConversationsListActivity extends AppCompatActivity {
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        recyclerView.setHasFixedSize(true);
+       // recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new ConversationListAdapter(myConversations);
+        Log.i("ConvListAdapter",metaConversations.toString());
+
+
+
+
+        mAdapter = new ConversationListAdapter(metaConversations);
+
+
+
 
         // create seperators between items
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
@@ -84,10 +115,42 @@ public class ConversationsListActivity extends AppCompatActivity {
 
 
         recyclerView.setAdapter(mAdapter);
-
+        Log.i("ConvListActivity", "I've set the adapter, muh boy.");
         /* end of recycler view crap */
 
 
+
+    }
+
+
+
+
+    // Defines callbacks for service binding, passed to bindService()
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            MessageService.LocalBinder binder = (MessageService.LocalBinder) service;
+            MessageService mService = binder.getService();
+            messageService = mService;
+            messageService.token = token;
+
+            mService.addBoundActivity(myActivity);
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+
+        }
+    };
+    @Override
+    protected void onDestroy() {
+        // Unregister since the activity is about to be closed.
+        messageService.removeBoundActivity(myActivity);
+        unbindService(connection);
+        super.onDestroy();
     }
 
     @Override
@@ -130,84 +193,58 @@ public class ConversationsListActivity extends AppCompatActivity {
 
     /**
      * creates a ConversationActivity for a specified metaConversation
-     * @param myConversationOverview
+     * @param myMetaConversation
      */
-    private void launchConversationActivity(ConversationOverview myConversationOverview) {
+    private void launchConversationActivity(MetaConversation myMetaConversation) {
         // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
         Intent myIntent = new Intent(ConversationsListActivity.this, ConversationActivity.class);
-        myIntent.putExtra("conv_id", myConversationOverview.getConvID());
+        myIntent.putExtra("conversationId", myMetaConversation.getConversationId());
+        myIntent.putExtra("token",token);
         ConversationsListActivity.this.startActivity(myIntent);
     }
 
 
 
     /**
-//     * returns a list of all messages in a conversation
-     */
-    private ArrayList<ConversationOverview> get_conversation_list() {
-        //TODO
-
-//        return new ArrayList<ConversationOverview>();
-
-        return get_dummy_conversation_list();
-    }
-
-    /**
      * returns a list of all messages in a conversation
      */
-    private ArrayList<ConversationOverview> get_dummy_conversation_list() {
-        //TODO
-        ArrayList<ConversationOverview> myConvList = new ArrayList<>();
+    private ArrayList<MetaConversation> get_dummy_conversation_list() {
+        ArrayList<MetaConversation> myConvList = new ArrayList<>();
 
-        ConversationOverview myConv = new_conv("Thomas Shelby", "1", "By order of the peaky blinders", new Date());
+        MetaConversation myConv = new_conv("Thomas Shelby", "1", "By order of the peaky blinders", 0);
         myConvList.add(myConv);
 
-        myConv = new_conv("Arthur Shelby", "U665354", "Linda!", new Date());
-        myConvList.add(myConv);
-
-
-        myConv = new_conv("John Shelby", "665355", "", new Date());
+        myConv = new_conv("Arthur Shelby", "U665354", "Linda!", 0);
         myConvList.add(myConv);
 
 
-        myConv = new_conv("Muh boy2", "665357", "I didn't do it.", new Date());
+        myConv = new_conv("John Shelby", "665355", "", 0);
         myConvList.add(myConv);
 
-        myConv = new_conv("Muh boy3", "665358", "I didn't do it.", new Date());
+
+        myConv = new_conv("Muh boy2", "665357", "I didn't do it.", 0);
         myConvList.add(myConv);
 
-        myConv = new_conv("Muh boy4", "665359", "I didn't do it.", new Date());
+        myConv = new_conv("Muh boy3", "665358", "I didn't do it.", 0);
         myConvList.add(myConv);
 
-        myConv = new_conv("Muh boy5", "665360", "I didn't do it.", new Date());
+        myConv = new_conv("Muh boy4", "665359", "I didn't do it.", 0);
         myConvList.add(myConv);
 
-        myConv = new_conv("Muh boy6", "665361", "I didn't do it.", new Date());
+        myConv = new_conv("Muh boy5", "665360", "I didn't do it.", 0);
+        myConvList.add(myConv);
+
+        myConv = new_conv("Muh boy6", "665361", "I didn't do it.", 0);
         myConvList.add(myConv);
 
         return myConvList;
     }
 
 
-    public ConversationOverview new_conv(String name, String id, String body, Date timeStamp){
-        Contact myContact = new Contact(name, id);
-//        Message myMessage = new Message.Builder()
-//                .setBody(body)
-//                .setConvID(id)
-//                .setTime_stamp(timeStamp)
-//                .build();
-        ConvMessage myMessage = ConvMessage.Builder.newInstance()
-                .setBody(body)
-                .setConvID(id)
-                .setTime_stamp(timeStamp)
-                .setSender(myContact)
-                .build();
+    public MetaConversation new_conv(String name, String id, String body, int timeStamp){
 
-        ConversationOverview myConv = ConversationOverview.Builder.newInstance()
-//                .setMyContact(myContact)
-                .setLatestMessage(myMessage)
-                .setConvID(id)
-                .build();
+        Message myMessage = new Message(id, body, timeStamp);
+        MetaConversation myConv = new MetaConversation(id, myMessage);
 
         return myConv;
     }
@@ -216,7 +253,7 @@ public class ConversationsListActivity extends AppCompatActivity {
     /**
      * adds a conversation conversation --  UNNECESSARY DUE TO ADAPTER
      */
-    private void add_conversation(ConversationOverview myConversation){
+    private void add_conversation(MetaConversation myConversation){
         //TODO
         // create and instantiate an item
 //        ConstraintLayout myLayout = new ConstraintLayout(R.id.conversationListItem);
@@ -235,18 +272,8 @@ public class ConversationsListActivity extends AppCompatActivity {
 
     public void add_conversation_dummy(){
         Contact myContact = new Contact("Thomas Shelby", "665151");
-        ConvMessage convMessage = ConvMessage.Builder.newInstance()
-                .setBody("Hey, ho, let's go.")
-                .setTime_stamp(new Date())
-                .setConvID("Conv ID example")
-                .setSender(myContact)
-                .build();
 
-        ConversationOverview myConvo = ConversationOverview.Builder.newInstance()
-                .setConvID("Conv ID example")
-                .setLatestMessage(convMessage)
-//                .setMyContact(myContact)
-                .build();
+        MetaConversation myConvo = new MetaConversation("Conv ID example",new Message("senderUserId","convMessage",0));
 
         add_conversation(myConvo);
     }

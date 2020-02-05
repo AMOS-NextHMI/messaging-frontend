@@ -2,9 +2,11 @@ package com.example.messaging_frontend.ui.login;
 
 import android.app.Activity;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -14,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -23,7 +26,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.messaging_frontend.AppActivity;
 import com.example.messaging_frontend.R;
+import com.example.messaging_frontend.data.LoginDataSource;
+
+import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -31,7 +38,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        System.out.println("fuck");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
@@ -44,20 +50,15 @@ public class RegisterActivity extends AppCompatActivity {
         final Button registerButton = findViewById(R.id.register_button);
         final ProgressBar loadingProgressBar = findViewById(R.id.register_loading);
 
-//        usernameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//
-//      @Override
-//        public void onFocusChange(View v, boolean hasFocus) {
-//
-//          // When focus is lost check that the text field has valid values.
-//
-//          if (!hasFocus) {
-//              {
-//                  if
-//              }
-//          }
-//      }
-//    });
+
+        // toolbar home option
+        Toolbar toolbar = (Toolbar) findViewById(R.id.registration_toolbar);
+        toolbar.setTitle("Registration");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
 
 
         loginViewModel.getRegisterFormState().observe(this, new Observer<RegisterFormState>() {
@@ -100,8 +101,6 @@ public class RegisterActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
             @Override
@@ -147,15 +146,43 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     * This method simply creates the home option on the toolbar
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
+        // TODO : initiate successful registration experience
 
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        // TODO: move intent to regist
+        Intent loginIntent = new Intent();
+        loginIntent.putExtra("token", model.getToken());
+        loginIntent.putExtra("display name", model.getDisplayName());
+        loginIntent.putExtra("login_success", true);
+
+        setResult(AppActivity.RESULT_OK, loginIntent);
+        finish();
+
+        // End TODO
+
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+        setResult(Activity.RESULT_CANCELED);
     }
 
 
