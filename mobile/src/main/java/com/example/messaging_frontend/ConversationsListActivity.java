@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -114,7 +115,8 @@ public class ConversationsListActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_add_conversation:
-                Toast.makeText(this, "Add conversation", Toast.LENGTH_SHORT).show();
+                DialogFragment newFragment = new NewConversationFragment();
+                newFragment.show(getSupportFragmentManager(), "test");
 
             default:
                 return super.onOptionsItemSelected(item);
