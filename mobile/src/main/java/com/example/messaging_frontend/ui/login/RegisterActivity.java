@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.messaging_frontend.AppActivity;
 import com.example.messaging_frontend.R;
 import com.example.messaging_frontend.data.LoginDataSource;
 
@@ -165,10 +167,22 @@ public class RegisterActivity extends AppCompatActivity {
         // TODO : initiate successful registration experience
 
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        // TODO: move intent to regist
+        Intent loginIntent = new Intent();
+        loginIntent.putExtra("token", model.getToken());
+        loginIntent.putExtra("display name", model.getDisplayName());
+        loginIntent.putExtra("login_success", true);
+
+        setResult(AppActivity.RESULT_OK, loginIntent);
+        finish();
+
+        // End TODO
+
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+        setResult(Activity.RESULT_CANCELED);
     }
 
 

@@ -68,10 +68,12 @@ public class AppActivity extends AppCompatActivity {
 //                login_success = data.getBooleanExtra("login_success", false);
                 init_conv_list();
             }
-            if (resultCode == Activity.RESULT_CANCELED) {
+            else if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
                 init_login();
             }
         }
     }
+
+    
 }

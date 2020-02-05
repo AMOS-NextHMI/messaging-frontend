@@ -32,6 +32,7 @@ import com.example.messaging_frontend.R;
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
+    public static final int REQUEST_REGISTRATION = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 loadingProgressBar.setVisibility(View.GONE);
                 if (loginResult.getError() != null) {
-                    showLoginFailed(loginResult.getError());
+                    showLoginFailed(loginResult.getErrorString());
 //                    setResult(Activity.RESULT_CANCELED);
                 }
                 if (loginResult.getSuccess() != null) {
@@ -110,6 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     loginViewModel.login(usernameEditText.getText().toString(),
                             passwordEditText.getText().toString());
+//                    Toast.makeText(getApplicationContext(),"login finished",Toast.LENGTH_LONG).show();
                 }
                 return false;
             }
@@ -130,7 +132,8 @@ public class LoginActivity extends AppCompatActivity {
                 // TODO: Launch a registration activity
                 Toast.makeText(getApplicationContext(), "Start registration fragment.", Toast.LENGTH_LONG).show();
                 // launch registration activity
-
+                Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+                LoginActivity.this.startActivityForResult(registerIntent, REQUEST_REGISTRATION);
                 // Fallunterscheidung:
                     // 1. Activity returns without doing anything
                     // 2. Activity returns with login info?
@@ -157,8 +160,30 @@ public class LoginActivity extends AppCompatActivity {
 //        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
 
-    private void showLoginFailed(@StringRes Integer errorString) {
+    private void showLoginFailed(String errorString) {
         setResult(Activity.RESULT_CANCELED);
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_REGISTRATION) {
+            if (resultCode == Activity.RESULT_OK) {
+
+
+
+                setResult(AppActivity.RESULT_OK, data);
+//        setResult(Activity.RESULT_OK);
+                Log.i("Friel doesn't care", "We end activity with TOKEN" + data.getStringExtra("token"));
+                finish();
+            }
+            else if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+                //
+            }
+        }
     }
 }

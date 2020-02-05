@@ -6,11 +6,13 @@ import androidx.lifecycle.ViewModel;
 
 import android.util.Log;
 import android.util.Patterns;
+import android.widget.Toast;
 
 import com.example.messaging_frontend.data.LoginRepository;
 import com.example.messaging_frontend.data.Result;
 import com.example.messaging_frontend.data.model.LoggedInUser;
-import com.example.messaging_frontend.R;
+import com.example.messaging_frontend.R;import android.widget.Toast;
+
 
 public class LoginViewModel extends ViewModel {
 
@@ -47,10 +49,13 @@ public class LoginViewModel extends ViewModel {
         if (result instanceof Result.Success) {
             LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
             loginResult.setValue(new LoginResult(new LoggedInUserView(data.getEmail(), data.getLoginToken())));
+            Log.i("LOGIN","Login Success!");
 
         } else {
-            Log.i("LOGIN", "Login failed.");
-            loginResult.setValue(new LoginResult(R.string.login_failed));
+//            String errorMessage = result.toString();
+            Log.i("LOGIN", "Login failed "+result.toString());
+
+            loginResult.setValue(new LoginResult(result.toString()));
         }
     }
 

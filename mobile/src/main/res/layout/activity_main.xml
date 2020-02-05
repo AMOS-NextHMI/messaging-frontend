@@ -71,11 +71,11 @@
             android:layout_height="wrap_content"
             android:text="conversation activity" />
 
-        <Button
-            android:id="@+id/login_Button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/title_activity_login" />
+<!--        <Button-->
+<!--            android:id="@+id/login_Button"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/title_activity_login" />-->
 
         <Button
             android:id="@+id/App_Button"
