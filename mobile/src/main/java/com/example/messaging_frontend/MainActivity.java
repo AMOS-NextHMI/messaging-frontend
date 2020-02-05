@@ -88,15 +88,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button loginButton = findViewById(R.id.login_Button);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mBound) {
-                    launchLoginActivity("1");
-                }
-            }
-        });
+//        Button loginButton = findViewById(R.id.login_Button);
+//        loginButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (mBound) {
+//                    launchLoginActivity("1");
+//                }
+//            }
+//        });
 
         Button registerButton = findViewById(R.id.registerButton);
         registerButton.setOnClickListener(new View.OnClickListener() {
