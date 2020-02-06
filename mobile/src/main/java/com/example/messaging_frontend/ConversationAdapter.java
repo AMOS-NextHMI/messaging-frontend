@@ -45,8 +45,6 @@ public class ConversationAdapter extends RecyclerView.Adapter {
     public int getItemViewType(int position) {
         Message message =  mMessageList.get(position);
 
-
-        //if (message.getUserId().equals(loggedUser.getUserId()) ){
         if (message.getUserId() == userId ){
 
             // If the current user is the sender of the message

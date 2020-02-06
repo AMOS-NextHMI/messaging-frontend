@@ -20,7 +20,7 @@ public interface JsonPlaceHolderApi {
 
 
     @GET("/")
-    Call<Conversation> getConversation(@Header("Authorization") String authKey);
+    Call<MetaConversation> getConversation(@Header("Authorization") String authKey);
 
 
     @GET("conversations")
@@ -28,8 +28,7 @@ public interface JsonPlaceHolderApi {
 
 
     @POST("messages")
-    @FormUrlEncoded
-    Call<Message> sendMessage(@Header("Authorization") String authKey,String messageText);
+    Call<String> sendMessage(@Header("Authorization") String authKey,String messageText);
 
 
 }

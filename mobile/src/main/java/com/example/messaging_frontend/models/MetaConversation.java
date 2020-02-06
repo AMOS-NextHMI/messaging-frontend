@@ -13,7 +13,7 @@ public class MetaConversation {
     List<String> members;
     List<Message> messages;
 
-    public MetaConversation(String _id, Message lastmessage, String name, List<String> members, List<Message> messages) {
+    public MetaConversation(String _id, String name, List<String> members, List<Message> messages) {
         this._id = _id;
         this.name = name;
         this.members = members;

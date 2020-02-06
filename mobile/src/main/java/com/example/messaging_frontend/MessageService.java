@@ -8,8 +8,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
-import com.example.messaging_frontend.models.Contact;
-import com.example.messaging_frontend.models.Conversation;
+
 import com.example.messaging_frontend.models.Message;
 import com.example.messaging_frontend.models.MetaConversation;
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class MessageService extends Service {
     public static Runnable runnable = null;
 
     private List<Activity> boundActivity;
-    Conversation conversation;
+    MetaConversation conversation;
     String token;
 
     //String  authKey="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlMzczNjYyOGNjN2FjMDAzYjNmYzhhZSIsInVzZXJuYW1lIjoiU1RSSU5HIiwiaWF0IjoxNTgwNjc2NzA2fQ.zGGnDZ2qEeBZ9FbpkUmtry_pL594lIjoYXELziKDAnQ";
@@ -116,70 +115,80 @@ public class MessageService extends Service {
                         Log.i("MessageService, getConversationOverview()", "Successful" + response.body());
 
 
-                                //if activityListView  is open
-                                if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationsListActivity")) {
+                        //if activityListView  is open
+                        if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationsListActivity")) {
 
-                                    ConversationsListActivity conversationsListActivity = (ConversationsListActivity) boundActivity.get(boundActivity.size() - 1);
-                                    conversationsListActivity.metaConversations.removeAll(conversationsListActivity.metaConversations);
-                                    conversationsListActivity.metaConversations.addAll(response.body());
+                            ConversationsListActivity conversationsListActivity = (ConversationsListActivity) boundActivity.get(boundActivity.size() - 1);
+                            conversationsListActivity.metaConversations.removeAll(conversationsListActivity.metaConversations);
+                            conversationsListActivity.metaConversations.addAll(response.body());
 
-                                    for(MetaConversation mc : response.body()){
-                                        Log.i("PLEASE",mc.get_id());
-                                    }
-                                    conversationsListActivity.mAdapter.notifyDataSetChanged();
+                            for (MetaConversation mc : response.body()) {
+                                Log.i("PLEASE", mc.get_id());
+                            }
+                            conversationsListActivity.mAdapter.notifyDataSetChanged();
+
+                        }
+
+
+                        if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationActivity")) {
+                            ConversationActivity conversationActivity = (ConversationActivity) boundActivity.get(boundActivity.size() - 1);
+                            String currentConversationID = conversationActivity.conversationId;
+
+                            for (MetaConversation mc : response.body()) {
+
+                                if (currentConversationID.contains(mc.get_id())) {
+                                    conversation = mc;
+                                    Log.i("BLABLOU",currentConversationID);
+
 
                                 }
 
+                                if(conversationActivity.mConversation.getMessages()==null){
+                                    conversationActivity.mConversation.getMessages().addAll(conversation.getMessages()) ;
+                                }
+                                else {
+                                    conversationActivity.mConversation.getMessages().removeAll(conversationActivity.mConversation.getMessages());
+                                    conversationActivity.mMessageAdapter.notifyDataSetChanged();
+                                    conversationActivity.mConversation.getMessages().addAll(conversation.getMessages());
+                                }
+                                conversationActivity.mMessageAdapter.notifyDataSetChanged();
 
-//                                if (boundActivity.get(boundActivity.size() - 1).toString().contains("ConversationActivity")) {
-//                                    ConversationActivity conversationActivity = (ConversationActivity) boundActivity.get(boundActivity.size() - 1);
-//                                    String currentConversationID = conversationActivity.mConversation.getConversationId();
+                            }
+                        }
+
+
+//                                    updatedConversations.removeAll(metaConversations);
 //
-//                                    List<MetaConversation> conversations = response.body();
-//                                    for(MetaConversation mc : response.body()){
-//                                        if(currentConversationID == mc.get_id()){
-//                                            Conversation conversation = getConversation(currentConversationID, token);
+//                                    for (MetaConversation updatedConv : updatedConversations) {
 //
+//                                        for (MetaConversation oldConv : metaConversations) {
+//                                            if (oldConv.getConversationId() == updatedConv.getConversationId()) {
+//                                                int indexOldConv = metaConversations.indexOf(oldConv);
+//                                                metaConversations.set(indexOldConv, updatedConv); //TO DO : MAKE SURE IT UPDATES THE LIST
 //
-//                                            conversationActivity.mConversation = conversation;
-//                                            conversationActivity.mMessageAdapter.notifyDataSetChanged();
-//
+//                                            }
 //                                        }
 //                                    }
 //
+//                                    for (MetaConversation conv : updatedConversations) {
+//                                        if (conv.getConversationId() != null) {
+//                                            if (conv.getConversationId().contentEquals(currentConversationID)) {
 //
-////                                    updatedConversations.removeAll(metaConversations);
-////
-////                                    for (MetaConversation updatedConv : updatedConversations) {
-////
-////                                        for (MetaConversation oldConv : metaConversations) {
-////                                            if (oldConv.getConversationId() == updatedConv.getConversationId()) {
-////                                                int indexOldConv = metaConversations.indexOf(oldConv);
-////                                                metaConversations.set(indexOldConv, updatedConv); //TO DO : MAKE SURE IT UPDATES THE LIST
-////
-////                                            }
-////                                        }
-////                                    }
-////
-////                                    for (MetaConversation conv : updatedConversations) {
-////                                        if (conv.getConversationId() != null) {
-////                                            if (conv.getConversationId().contentEquals(currentConversationID)) {
-////
-////                                                Conversation conversation = getConversation(currentConversationID, token);
-////                                                conversationActivity.mConversation = conversation;
-////                                                conversationActivity.mMessageAdapter.notifyDataSetChanged();
-////                                            }
-////                                        }
-////                                    }
-////                                }
-//
-//                                //if none of the above, then notification
-//
-//                            }
+//                                                Conversation conversation = getConversation(currentConversationID, token);
+//                                                conversationActivity.mConversation = conversation;
+//                                                conversationActivity.mMessageAdapter.notifyDataSetChanged();
+//                                            }
+//                                        }
+//                                    }
+//                                }
 
-
+                        //if none of the above, then notification
 
                     }
+
+
+
+
 
 
                     @Override
@@ -195,7 +204,7 @@ public class MessageService extends Service {
 
 
 
-    public Conversation getConversation( String token , String conversationId){
+    public MetaConversation getConversation(String token , String conversationId){
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://130.149.172.169/conversations/conversationId="+conversationId+"/")
@@ -204,23 +213,23 @@ public class MessageService extends Service {
 
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
 
-        Call<Conversation> call = jsonPlaceHolderApi.getConversation(token);
+        Call<MetaConversation> call = jsonPlaceHolderApi.getConversation(token);
 
-        call.enqueue(new Callback<Conversation>() {
+        call.enqueue(new Callback<MetaConversation>() {
             @Override
-            public void onResponse(Call<Conversation> call, Response<Conversation> response) {
+            public void onResponse(Call<MetaConversation> call, Response<MetaConversation> response) {
                 if(!response.isSuccessful()){
                     Log.i("MessageService, getConversation()","Unsuccessful: "+ response);
 
                     return ;
                 }
-                Log.i("MessageService, getConversation()",   "ConversationID: "+"\n"+ response.body().getConversationId()+"\n"+"Conversation members: "+response.body().getMember().toString()+"\n"+ "Conversation messages: "+response.body().getMessages().toString());
+             //   Log.i("MessageService, getConversation()",   "ConversationID: "+"\n"+ response.body().get_id()+"\n"+"Conversation members: "+response.body().getMembers().toString()+"\n"+ "Conversation messages: "+response.body().getMessages().toString());
 
-                conversation = new Conversation(response.body().getConversationId(),response.body().getName(),response.body().getMember(),response.body().getMessages());
+                conversation = new MetaConversation(response.body().get_id(),response.body().getName(),response.body().getMembers(),response.body().getMessages());
 
             }
             @Override
-            public void onFailure(Call<Conversation> call, Throwable t) {
+            public void onFailure(Call<MetaConversation> call, Throwable t) {
                 Log.i("MessageService, getConversation()",t.getMessage());
             }
         });
@@ -299,12 +308,12 @@ public class MessageService extends Service {
     public void sendMessage(String conversationId, String messageText) {
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://130.149.172.169/conversations/conversationId="+conversationId)
+                .baseUrl("http://130.149.172.169/conversations/conversationId="+conversationId+"/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-        Call<Message> call = jsonPlaceHolderApi.sendMessage(token,messageText);
+        Call<String> call = jsonPlaceHolderApi.sendMessage(token,messageText);
     }
 
 

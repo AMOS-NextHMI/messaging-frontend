@@ -62,14 +62,14 @@ public class ConversationsListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("ConvListActivity","THE CONTEXT IS:"+String.valueOf(getApplicationContext()));
+
         myActivity = this;
         metaConversations=new ArrayList<>();
        // dummyMetaConversations = get_dummy_conversation_list();
         Intent intent = getIntent();
         /* value should contain relevant information that we received from main */
         token = intent.getStringExtra("token");
-        Log.i("token",token);
+
         bindService(new Intent(this, MessageService.class), connection, 0);
         displayName = intent.getStringExtra("display name");
         userId = intent.getStringExtra("userId");
@@ -99,7 +99,7 @@ public class ConversationsListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new ConversationListAdapter(metaConversations,displayName);
+        mAdapter = new ConversationListAdapter(metaConversations,token);
 
 
 
@@ -110,7 +110,7 @@ public class ConversationsListActivity extends AppCompatActivity {
 
 
         recyclerView.setAdapter(mAdapter);
-        Log.i("ConvListActivity", "I've set the adapter, muh boy.");
+
         /* end of recycler view crap */
 
 

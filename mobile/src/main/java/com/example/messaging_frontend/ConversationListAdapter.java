@@ -19,16 +19,17 @@ import java.util.List;
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationListAdapter.ConversationListViewHolder> {
     List<MetaConversation> mDataset;
     String conversationId;
-    String userId;
+    String token;
 
     // TODO: Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
 
-    public ConversationListAdapter(List<MetaConversation> myConversationList, String displayName) {
+    public ConversationListAdapter(List<MetaConversation> myConversationList, String token) {
 
         this.mDataset = myConversationList;
-        this.userId = userId;
+
+        this.token= token;
 
     }
 
@@ -45,31 +46,25 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
             conversation_name = v.findViewById(R.id.textViewConversationName);
 
 
-
-
-
-            if(conversation_name!=null) {
-                for (MetaConversation mc : mDataset){
-                    if(mc.getName() == conversation_name.getText()){
-                        conversationId = mc.get_id();
-
+            conversation_name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Context context = view.getContext();
+                    Intent intent = new Intent(context, ConversationActivity.class);
+                    for (MetaConversation mc : mDataset) {
+                        if (mc.getName() == conversation_name.getText()) {
+                            conversationId = mc.get_id();
+                            Log.i("getting convID", conversationId);
+                        }
 
                     }
+                    intent.putExtra("ConversationId", conversationId);
+                    intent.putExtra("token", token);
+                    Log.i("WTF", (String) conversation_name.getText());
+                    ((Context) context).startActivity(intent);
+
                 }
-                conversation_name.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Context context = view.getContext();
-                        Intent  intent =  new Intent(context, ConversationActivity.class);
-                        intent.putExtra("ConversationId",conversationId);
-                        intent.putExtra("UserId",userId);
-
-                        ((Context) context).startActivity(intent);
-
-                    }
-                });
-            }
-
+            });
 
 
             last_message = v.findViewById(R.id.textViewLastMessage);
@@ -96,7 +91,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
         // - replace the contents of the view with that element
         // TODO: introduce the missing compleixity
         MetaConversation metaConversation = this.mDataset.get(position);
-        Log.i("ConvListAdapter HEEE",this.mDataset.toString());
+
         if(metaConversation.getMessages().size()!=0)
             holder.last_message.setText(metaConversation.getMessages().get(0).getMessageText()); //TODO: prone to bug if latest message doesn't exist.
         else holder.last_message.setText("");
