@@ -152,11 +152,11 @@ public class ConversationActivity extends AppCompatActivity {
         });
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.conversation_toolbar);
-//        toolbar.setTitle(mConversation.getMember().toString());
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+////        toolbar.setTitle(mConversation.getMember().toString());
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
     }
 

@@ -27,14 +27,14 @@ public class AppActivity extends AppCompatActivity {
         setContentView(R.layout.activity_app);
 
         // login
-//        init_login(); //comment out
+        init_login(); //comment out
 
         // TODO: remove the things here.  They're only there to emulate a valid login
         //comment in
         //register
-        displayName = "string";
-        token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlM2FmMzMxNTQwMmVlMDE2MWQzY2EwOSIsImlhdCI6MTU4MDkyMTY0OX0.FW4LaQoCyK3X4LI4IpEQC21e0PQcfmutWDCBXgzPgA9I3R9AqaR2vC_ytTR40AFUzHbPOjtgFiUvJBub6xM-Sg";
-        init_conv_list();
+//        displayName = "string";
+//        token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlM2FmMzMxNTQwMmVlMDE2MWQzY2EwOSIsImlhdCI6MTU4MDkyMTY0OX0.FW4LaQoCyK3X4LI4IpEQC21e0PQcfmutWDCBXgzPgA9I3R9AqaR2vC_ytTR40AFUzHbPOjtgFiUvJBub6xM-Sg";
+//        init_conv_list();
     }
 
 
@@ -61,9 +61,8 @@ public class AppActivity extends AppCompatActivity {
 
         if (requestCode == REQUEST_LOGIN) {
             if (resultCode == Activity.RESULT_OK) {
-                // TODO: remove Anfuehrungszeichen at start and end of token
-                token = data.getStringExtra("token");
 
+                token = data.getStringExtra("token");
                 // The server adds quotation marks to the token and we remove them here if they still exist.
                 // We do this, since it's too late to ask for the server to make some changes.
                 if (token.charAt(0) == '\"' && token.charAt(token.length()-1) == '\"') {
