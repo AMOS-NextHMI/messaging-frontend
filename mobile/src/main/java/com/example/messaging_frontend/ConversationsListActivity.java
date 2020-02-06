@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -29,16 +30,15 @@ import java.util.List;
 
 /**
  * This activity displays the chat list screen with a list of all contacts.
- *
+ * <p>
  * TODO: Implement the following
  * It includes the following:
  * - scrollable chats scrollView that contains a user list where a user template has a:
- *      - User Pro-pic
- *      - name
- *      - last sent message
+ * - User Pro-pic
+ * - name
+ * - last sent message
  * - an add user button
  * - a search button to search for a user
- *
  */
 public class ConversationsListActivity extends AppCompatActivity {
 
@@ -108,7 +108,6 @@ public class ConversationsListActivity extends AppCompatActivity {
 
         // create seperators between items
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-
 
 
         recyclerView.setAdapter(mAdapter);
@@ -189,6 +188,18 @@ public class ConversationsListActivity extends AppCompatActivity {
 
 
 
+
+    /**
+     * creates a ConversationActivity for a specified metaConversation
+     *
+     * @param myConversationOverview
+     */
+    private void launchConversationActivity(ConversationOverview myConversationOverview) {
+        // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
+        Intent myIntent = new Intent(ConversationsListActivity.this, ConversationActivity.class);
+        myIntent.putExtra("conv_id", myConversationOverview.getConvID());
+        ConversationsListActivity.this.startActivity(myIntent);
+    }
 
 
 
