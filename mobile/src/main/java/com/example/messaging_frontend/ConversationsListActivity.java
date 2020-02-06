@@ -15,6 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -86,7 +88,7 @@ public class ConversationsListActivity extends AppCompatActivity {
 
 
         // TODO: create a conversation for each element in the list
-
+        /* start of recycler view crap */
         recyclerView = (RecyclerView) findViewById(R.id.conversation_list_view);
 
 
@@ -164,17 +166,20 @@ public class ConversationsListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_search:
-                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
-                return true;
-
-            case R.id.action_settings:
-                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
-                return true;
+//            case R.id.action_search:
+//                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
+//                return true;
+//
+//            case R.id.action_settings:
+//                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
+//                return true;
 
             case R.id.action_add_conversation:
-                Toast.makeText(this, "Add conversation", Toast.LENGTH_SHORT).show();
-
+                Bundle bundle = new Bundle();
+                bundle.putString("token", token);
+                DialogFragment newFragment = new NewConversationFragment();
+                newFragment.show(getSupportFragmentManager(), "test");
+                newFragment.setArguments(bundle);
             default:
                 return super.onOptionsItemSelected(item);
         }

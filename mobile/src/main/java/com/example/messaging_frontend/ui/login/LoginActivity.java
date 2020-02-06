@@ -173,10 +173,8 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode == REQUEST_REGISTRATION) {
             if (resultCode == Activity.RESULT_OK) {
 
-
-
                 setResult(AppActivity.RESULT_OK, data);
-//        setResult(Activity.RESULT_OK);
+                // setResult(Activity.RESULT_OK);
                 Log.i("Friel doesn't care", "We end activity with TOKEN" + data.getStringExtra("token"));
                 finish();
             }

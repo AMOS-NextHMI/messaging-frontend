@@ -63,6 +63,15 @@ public class AppActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 // TODO: remove Anfuehrungszeichen at start and end of token
                 token = data.getStringExtra("token");
+
+                // The server adds quotation marks to the token and we remove them here if they still exist.
+                // We do this, since it's too late to ask for the server to make some changes.
+                if (token.charAt(0) == '\"' && token.charAt(token.length()-1) == '\"') {
+                    token = token.substring(1, token.length() - 1);
+                }
+
+
+
                 displayName = data.getStringExtra("display name");
 //                login_success = data.getBooleanExtra("login_success", false);
                 init_conv_list();
