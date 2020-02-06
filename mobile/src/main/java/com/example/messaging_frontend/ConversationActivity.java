@@ -16,6 +16,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,11 +27,16 @@ import com.example.messaging_frontend.auth.AuthenticationInterceptor;
 import com.example.messaging_frontend.models.Contact;
 import com.example.messaging_frontend.models.Conversation;
 import com.example.messaging_frontend.models.Message;
+import com.example.messaging_frontend.models.MetaConversation;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.jackson.io.JacksonDeserializer;
+import io.jsonwebtoken.lang.Maps;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -77,12 +83,14 @@ public class ConversationActivity extends AppCompatActivity {
     Button sendButton;
 
 
-    Conversation mConversation;
-    Contact mSender;
+    MetaConversation mConversation;
+     String myUserId;
+    String myDisplayName;
     JsonPlaceHolderApi jsonPlaceHolderApi;
     MessageService messageService;
     Activity myActivity;
      String token;
+    String conversationId;
 
 
 
@@ -91,22 +99,34 @@ public class ConversationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
-        Log.i("ConversationActivity","What?");
+
         token = this.getIntent().getStringExtra("token");
 
+
+        myDisplayName = this.getIntent().getStringExtra("displayName");
         myActivity= this;
+
+        conversationId = this.getIntent().getStringExtra("ConversationId");
+
+        List<Message> msgs = new ArrayList<>();
+        mConversation = new MetaConversation(conversationId,"",null,msgs);
         bindService(new Intent(this, MessageService.class), connection, 0);
-        String conversationId = this.getIntent().getStringExtra("conversationId");
+
 
        // mConversation = messageService.getConversation(token,conversationId);
-        List<Message> msg = new ArrayList<>();
-        mConversation = new Conversation("stupid","",null,msg);
+
+
 
 
 
 
         mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
-        mMessageAdapter = new ConversationAdapter(this, mConversation.getMessages());
+        try {
+            myUserId=  ConversationActivity.decoded(token);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mMessageAdapter = new ConversationAdapter(this, mConversation.getMessages(), myUserId);
 
 
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -184,11 +204,35 @@ public class ConversationActivity extends AppCompatActivity {
         Date date = new Date();
         EditText messageSent = (EditText) findViewById(R.id.text_chatbox);
         messageSent.getText().clear();
-        Message message = new Message("2", messageSent.getText().toString(), date.getTime());
+        Message message = new Message(myUserId,"",String.valueOf(date.getTime()),conversationId, messageSent.getText().toString());
 
         mConversation.getMessages().add(message);
-        mMessageAdapter.notifyItemInserted(mConversation.getMessages().indexOf(message));
-        messageService.sendMessage(mConversation.getConversationId(),message.getMessageText());
+    //    mMessageAdapter.notifyItemInserted(mConversation.getMessages().indexOf(message));
+        messageService.sendMessage(mConversation.get_id(),message.getMessageText());
+
+    }
+
+    public static String decoded(String JWTEncoded)  {
+        try {
+            String[] split = JWTEncoded.split("\\.");
+            String userId =getJson(split[1]);
+            userId =userId.substring(7,userId.indexOf(",")-1);
+            return userId;
+
+
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+    }
+
+    static String getJson(String token) throws UnsupportedEncodingException {
+
+        byte[] decodedBytes = Base64.decode(token, Base64.URL_SAFE);
+        return new String(decodedBytes, "UTF-8");
+
+
+//        Keys.secretKeyFor(SignatureAlgorithm.HS256)
+
 
     }
 }

@@ -2,18 +2,18 @@ package com.example.messaging_frontend.models;
 
 public class Contact {
     private String name;
-    private String id;
-    private java.net.URL profilUrl = null;
+    private String userId;
+    private java.net.URL profilURL = null;
 
 
 
     public Contact(String name, String id){
-        this.name = name;
-        this.id = id;
+
+        this.userId = id;
     }
 
     public String getId() {
-        return id;
+        return userId;
     }
 
     public String getName() {
@@ -25,11 +25,11 @@ public class Contact {
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.userId = id;
     }
 
     public java.net.URL getProfileUrl() {
-        return profilUrl;
+        return profilURL;
     }
 
     /**
@@ -37,6 +37,6 @@ public class Contact {
      * TODO: potential security risk.  A foreign URL is set without checking it out.
      */
     public void setProfilUrl(java.net.URL profilUrl) {
-        this.profilUrl = profilUrl;
+        this.profilURL = profilUrl;
     }
 }
