@@ -25,7 +25,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
     private Context mContext;
     private List<Message> mMessageList;
 
-    public ConversationAdapter(Context context, List<Message> messageList,String displayName) {
+    public ConversationAdapter(Context context, List<Message> messageList,String userId) {
         mContext = context;
         this.userId =userId;
         if(messageList==null){
@@ -44,8 +44,8 @@ public class ConversationAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         Message message =  mMessageList.get(position);
-
-        if (message.getUserId() == userId ){
+        Log.i("userID",userId);
+        if (message.getUserId().contains(userId) ){
 
             // If the current user is the sender of the message
 
@@ -65,7 +65,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        Log.w("ConversationAdapter","viewHolder");
+       // Log.w("ConversationAdapter","viewHolder");
 
         if (viewType == VIEW_TYPE_MESSAGE_SENT) {
             view = LayoutInflater.from(parent.getContext())
@@ -85,7 +85,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(mMessageList!=null) {
             Message message = (Message) mMessageList.get(position);
-            Log.w("ConversationAdapter", "bindViewHolder");
+        //    Log.w("ConversationAdapter", "bindViewHolder");
             switch (holder.getItemViewType()) {
                 case VIEW_TYPE_MESSAGE_SENT:
                     ((SentMessageHolder) holder).bind(message);

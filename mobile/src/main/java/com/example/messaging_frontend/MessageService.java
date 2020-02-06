@@ -11,8 +11,18 @@ import android.widget.Toast;
 
 import com.example.messaging_frontend.models.Message;
 import com.example.messaging_frontend.models.MetaConversation;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,7 +37,8 @@ public class MessageService extends Service {
 
     private static final String TAG = "MessageService";
     private final IBinder binder = new LocalBinder();
-
+    public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+    OkHttpClient client = new OkHttpClient();
 
     private static String API_BASE_URL = "https://130.149.172.169/";
     private List<MetaConversation> metaConversations;
@@ -93,7 +104,7 @@ public class MessageService extends Service {
 
     public void getConversationOverview()  {
         if(boundActivity.size()!= 0) {
-            Log.i("token",token);
+        //    Log.i("token",token);
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("http://130.149.172.169/")
                     .addConverterFactory(GsonConverterFactory.create())
@@ -108,11 +119,11 @@ public class MessageService extends Service {
                     public void onResponse(Call<List<MetaConversation>> call, Response<List<MetaConversation>> response) {
                         if (!response.isSuccessful()) {
 
-                            Log.i("MessageService, getConversationOverview()", "Unsuccessful: " + response);
+                      //      Log.i("MessageService, getConversationOverview()", "Unsuccessful: " + response);
                             return;
                         }
 
-                        Log.i("MessageService, getConversationOverview()", "Successful" + response.body());
+                     //   Log.i("MessageService, getConversationOverview()", "Successful" + response.body());
 
 
                         //if activityListView  is open
@@ -123,7 +134,7 @@ public class MessageService extends Service {
                             conversationsListActivity.metaConversations.addAll(response.body());
 
                             for (MetaConversation mc : response.body()) {
-                                Log.i("PLEASE", mc.get_id());
+                         //       Log.i("PLEASE", mc.get_id());
                             }
                             conversationsListActivity.mAdapter.notifyDataSetChanged();
 
@@ -138,7 +149,7 @@ public class MessageService extends Service {
 
                                 if (currentConversationID.contains(mc.get_id())) {
                                     conversation = mc;
-                                    Log.i("BLABLOU",currentConversationID);
+                                   // Log.i("BLABLOU",currentConversationID);
 
 
                                 }
@@ -219,7 +230,7 @@ public class MessageService extends Service {
             @Override
             public void onResponse(Call<MetaConversation> call, Response<MetaConversation> response) {
                 if(!response.isSuccessful()){
-                    Log.i("MessageService, getConversation()","Unsuccessful: "+ response);
+              //      Log.i("MessageService, getConversation()","Unsuccessful: "+ response);
 
                     return ;
                 }
@@ -307,13 +318,31 @@ public class MessageService extends Service {
 
     public void sendMessage(String conversationId, String messageText) {
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://130.149.172.169/conversations/conversationId="+conversationId+"/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
-        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-        Call<String> call = jsonPlaceHolderApi.sendMessage(token,messageText);
+
+        String json = null;
+        try {
+            json = new JSONObject()
+                    .put("messageText", messageText)
+                    .toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url("http://130.149.172.169/conversations/"+conversationId+"/messages")
+//                .url("https://httpdump.io/kjkc0")
+                .addHeader("Authorization", token)
+                .post(body)
+                .build();
+        try (okhttp3.Response response = client.newCall(request).execute()) {
+            Log.i("myTest", "" + response.code());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 

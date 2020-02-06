@@ -8,6 +8,7 @@ import com.example.messaging_frontend.models.MetaConversation;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -28,7 +29,8 @@ public interface JsonPlaceHolderApi {
 
 
     @POST("messages")
-    Call<String> sendMessage(@Header("Authorization") String authKey,String messageText);
+
+    Call<String> sendMessage(@Header("Authorization") String authKey, @Body String messageText);
 
 
 }

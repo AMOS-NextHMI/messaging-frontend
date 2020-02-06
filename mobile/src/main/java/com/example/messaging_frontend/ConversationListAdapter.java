@@ -54,13 +54,13 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationLi
                     for (MetaConversation mc : mDataset) {
                         if (mc.getName() == conversation_name.getText()) {
                             conversationId = mc.get_id();
-                            Log.i("getting convID", conversationId);
+                        //    Log.i("getting convID", conversationId);
                         }
 
                     }
                     intent.putExtra("ConversationId", conversationId);
                     intent.putExtra("token", token);
-                    Log.i("WTF", (String) conversation_name.getText());
+               //     Log.i("WTF", (String) conversation_name.getText());
                     ((Context) context).startActivity(intent);
 
                 }

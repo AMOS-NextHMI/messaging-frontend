@@ -29,6 +29,9 @@ import com.example.messaging_frontend.models.Conversation;
 import com.example.messaging_frontend.models.Message;
 import com.example.messaging_frontend.models.MetaConversation;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -136,8 +139,14 @@ public class ConversationActivity extends AppCompatActivity {
         sendButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                sendMessage();
-                Log.i("ConversationActivity",mConversation.getMessages().toString());
+                try {
+                    sendMessage();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                //   Log.i("ConversationActivity",mConversation.getMessages().toString());
 
             }
         });
@@ -200,15 +209,37 @@ public class ConversationActivity extends AppCompatActivity {
      * handles the UI aspect of sending a message and sends out a send_message query.
      * params can be added if/when needed
      */
-    private void sendMessage(){
+    private void sendMessage() throws IOException, JSONException {
         Date date = new Date();
         EditText messageSent = (EditText) findViewById(R.id.text_chatbox);
-        messageSent.getText().clear();
-        Message message = new Message(myUserId,"",String.valueOf(date.getTime()),conversationId, messageSent.getText().toString());
 
+        Message message = new Message(myUserId,"",String.valueOf(date.getTime()),conversationId, messageSent.getText().toString());
+        messageSent.getText().clear();
         mConversation.getMessages().add(message);
     //    mMessageAdapter.notifyItemInserted(mConversation.getMessages().indexOf(message));
-        messageService.sendMessage(mConversation.get_id(),message.getMessageText());
+
+
+
+
+        final String id_HTTP = mConversation.get_id();
+        final String message_HTTP = message.getMessageText();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try  {
+                    messageService.sendMessage(id_HTTP, message_HTTP);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+
+
+
+
 
     }
 
