@@ -103,32 +103,21 @@ public class ConversationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
 
-        token = this.getIntent().getStringExtra("token");
-
-
-        myDisplayName = this.getIntent().getStringExtra("displayName");
         myActivity= this;
-
+        token = this.getIntent().getStringExtra("token");
+        myDisplayName = this.getIntent().getStringExtra("displayName");
         conversationId = this.getIntent().getStringExtra("ConversationId");
-
-        List<Message> msgs = new ArrayList<>();
-        mConversation = new MetaConversation(conversationId,"",null,msgs);
-        bindService(new Intent(this, MessageService.class), connection, 0);
-
-
-       // mConversation = messageService.getConversation(token,conversationId);
-
-
-
-
-
-
-        mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
         try {
             myUserId=  ConversationActivity.decoded(token);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        List<Message> msgs = new ArrayList<>();
+        bindService(new Intent(this, MessageService.class), connection, 0);
+
+        mConversation = new MetaConversation(conversationId,"",null,msgs);
+        mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
         mMessageAdapter = new ConversationAdapter(this, mConversation.getMessages(), myUserId);
 
 
@@ -136,28 +125,21 @@ public class ConversationActivity extends AppCompatActivity {
         mMessageRecycler.setAdapter(mMessageAdapter);
         sendButton= (Button) findViewById(R.id.button_send);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         sendButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 try {
                     sendMessage();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
+                } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
-                //   Log.i("ConversationActivity",mConversation.getMessages().toString());
-
             }
         });
-
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.conversation_toolbar);
-//        toolbar.setTitle(mConversation.getMember().toString());
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
     }
 
     // Defines callbacks for service binding, passed to bindService()
@@ -196,13 +178,6 @@ public class ConversationActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-
-    /**
-     * returns a list of all messages in a conversation
-     */
-    private ArrayList<Message> get_conversation(/* an ID for the conversation */) {
-        return new ArrayList<Message>();
-    }
 
 
     /**

@@ -27,14 +27,14 @@ public class AppActivity extends AppCompatActivity {
         setContentView(R.layout.activity_app);
 
         // login
-//        init_login(); //comment out
+        init_login();
 
         // TODO: remove the things here.  They're only there to emulate a valid login
         //comment in
         //register
-        displayName = "string";
-        token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlM2FmMzMxNTQwMmVlMDE2MWQzY2EwOSIsImlhdCI6MTU4MDkyMTY0OX0.FW4LaQoCyK3X4LI4IpEQC21e0PQcfmutWDCBXgzPgA9I3R9AqaR2vC_ytTR40AFUzHbPOjtgFiUvJBub6xM-Sg";
-        init_conv_list();
+//        displayName = "string";
+//        token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlM2FmMzMxNTQwMmVlMDE2MWQzY2EwOSIsImlhdCI6MTU4MDkyMTY0OX0.FW4LaQoCyK3X4LI4IpEQC21e0PQcfmutWDCBXgzPgA9I3R9AqaR2vC_ytTR40AFUzHbPOjtgFiUvJBub6xM-Sg";
+//        init_conv_list();
     }
 
 

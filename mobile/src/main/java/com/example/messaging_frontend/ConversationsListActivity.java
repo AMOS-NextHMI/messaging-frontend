@@ -189,17 +189,17 @@ public class ConversationsListActivity extends AppCompatActivity {
 
 
 
-    /**
-     * creates a ConversationActivity for a specified metaConversation
-     *
-     * @param myConversationOverview
-     */
-    private void launchConversationActivity(ConversationOverview myConversationOverview) {
-        // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
-        Intent myIntent = new Intent(ConversationsListActivity.this, ConversationActivity.class);
-        myIntent.putExtra("conv_id", myConversationOverview.getConvID());
-        ConversationsListActivity.this.startActivity(myIntent);
-    }
+//    /**
+//     * creates a ConversationActivity for a specified metaConversation
+//     *
+//     * @param myConversationOverview
+//     */
+//    private void launchConversationActivity(ConversationOverview myConversationOverview) {
+//        // https://stackoverflow.com/questions/4186021/how-to-start-new-activity-on-button-click
+//        Intent myIntent = new Intent(ConversationsListActivity.this, ConversationActivity.class);
+//        myIntent.putExtra("conv_id", myConversationOverview.getConvID());
+//        ConversationsListActivity.this.startActivity(myIntent);
+//    }
 
 
 

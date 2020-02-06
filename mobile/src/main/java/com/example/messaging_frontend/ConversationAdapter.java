@@ -133,6 +133,7 @@ public class ConversationAdapter extends RecyclerView.Adapter {
             // Format the stored timestamp into a readable String using method.
            // timeText.setText("11:00");
 
+//            nameText.setText(message.getUserId());
             nameText.setText(message.getUserId());
 
             // Insert the profile image from the URL into the ImageView.

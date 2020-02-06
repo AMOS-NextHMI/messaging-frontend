@@ -36,6 +36,7 @@ public class NewConversationFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
+
         final String token = getArguments().getString("token");
 
 
