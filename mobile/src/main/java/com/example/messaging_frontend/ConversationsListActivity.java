@@ -178,16 +178,15 @@ public class ConversationsListActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_add_conversation:
+                Bundle bundle = new Bundle();
+                bundle.putString("token", token);
                 DialogFragment newFragment = new NewConversationFragment();
                 newFragment.show(getSupportFragmentManager(), "test");
-
+                newFragment.setArguments(bundle);
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
-
 
 
 

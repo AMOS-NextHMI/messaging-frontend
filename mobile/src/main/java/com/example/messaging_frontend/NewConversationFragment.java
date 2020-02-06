@@ -12,10 +12,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.messaging_frontend.data.ReturnPair;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -33,6 +36,7 @@ public class NewConversationFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
+        final String token = getArguments().getString("token");
 
 
         builder.setTitle("Start new Chat");
@@ -42,9 +46,9 @@ public class NewConversationFragment extends DialogFragment {
         builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                editChatname  = (EditText) dialogView.findViewById(R.id.chatname);
-                editUsernames  = (EditText) dialogView.findViewById(R.id.chatname);
-                sendNewChatRequest(editChatname.getText().toString(), editUsernames.getText().toString());
+                editChatname = (EditText) dialogView.findViewById(R.id.chatname);
+                editUsernames = (EditText) dialogView.findViewById(R.id.usernames);
+                sendNewChatRequest(editChatname.getText().toString(), editUsernames.getText().toString(), token);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -55,18 +59,36 @@ public class NewConversationFragment extends DialogFragment {
         return builder.create();
     }
 
-    public void sendNewChatRequest(String chatname, String receiver){
-        try {
-            String result = postNewChat(chatname, receiver);
-            Log.i("myTest", result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void sendNewChatRequest(String chatname, String receiver, String token) {
+
+        Log.i("myTest", chatname + "," + receiver + "," + token);
+
+        final String chatname_HTTP = chatname;
+        final String receiver_HTTP = receiver;
+        final String token_HTTP = token;
+
+
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    postNewChat(chatname_HTTP, receiver_HTTP, token_HTTP);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
     }
 
-    public String postNewChat(String chatname, String receiver) throws IOException, JSONException {
+    public void postNewChat(String chatname, String receiver, String token) throws IOException, JSONException {
+
+
+        if (token.charAt(0) == '\"' && token.charAt(token.length()-1) == '\"') {
+            token = token.substring(1, token.length() - 1);
+        }
+
 
         String json = new JSONObject()
                 .put("name", chatname)
@@ -76,13 +98,13 @@ public class NewConversationFragment extends DialogFragment {
 
         RequestBody body = RequestBody.create(json, JSON);
         Request request = new Request.Builder()
-                .url("http://130.149.172.169/conversations/")
-                .header("Authorization", "123")
+                .url("http://130.149.172.169/conversations")
+//                .url("https://httpdump.io/kjkc0")
+                .addHeader("Authorization", token)
                 .post(body)
                 .build();
         try (Response response = client.newCall(request).execute()) {
-            return response.body().string();
-
+            Log.i("myTest", "" + response.code());
         }
     }
 }
